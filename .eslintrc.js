@@ -8,7 +8,8 @@ module.exports = {
   extends: ["airbnb-base", "airbnb-typescript/base", "prettier"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 12,
+    project: "./tsconfig.json",
+    ecmaVersion: 13,
   },
   plugins: ["@typescript-eslint"],
   rules: {
@@ -16,9 +17,5 @@ module.exports = {
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
     "consistent-return": "off",
-    "no-debugger": "off",
-    "import/extensions": "off",
-    "no-console": "off",
-    "lines-between-class-members": "off",
   },
 };
