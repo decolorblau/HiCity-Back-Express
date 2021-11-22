@@ -1,0 +1,40 @@
+{
+  "name": "Back-Final-Project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git",
+  "author": "Claudia Font <claudiafontmarques@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "i": "^0.3.7",
+    "jest": "^27.3.1",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.1.6"
+  },
+  "scripts": {
+    "dev": "nodemon index -q",
+    "start": "node index",
+    "test": "jest --watchAll --collect-coverage"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "debug": "^4.3.2",
+    "dotenv": "^10.0.0",
+    "eslint-config-airbnb-typescript": "^16.0.0",
+    "express": "^4.17.1",
+    "express-validation": "^3.0.8",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.13",
+    "morgan": "^1.10.0",
+    "typescript": "^4.5.2"
+  }
+}
