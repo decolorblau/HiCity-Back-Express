@@ -1,26 +1,35 @@
-const express = require("express");
-const morgan = require("morgan");
-const cors = require("cors");
-const debug = require("debug")("series:server");
-const chalk = require("chalk");
+import express from "express";
+import chalk from "chalk";
+import cors from "cors";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import Debug from "debug";
 
-/* const {
+import {
   notFoundErrorHandler,
   generalErrorHandler,
-} = require("./middlewares/errors");
-const auth = require("./middlewares/auth"); */
+} from "./middlewares/errors";
 
-const app = express();
+dotenv.config();
+const debug = Debug("HiCity:server");
+
+interface Error {
+  code: number | string;
+  message: string;
+}
+
+export const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-const initializeServer = (port) =>
-  new Promise<void>((resolve, reject) => {
+export const initializeServer = (port) =>
+  new Promise((resolve, reject) => {
     const server = app.listen(port, () => {
       debug(chalk.yellow(`Listening ${port} port`));
       resolve(server);
     });
-    server.on("error", (error) => {
+    server.on("error", (error: Error) => {
       debug(chalk.red("There was an error starting the server."));
       if (error.code === "EADDRINUSE") {
         debug(chalk.red(`The port ${port} is in use.`));
@@ -34,7 +43,5 @@ const initializeServer = (port) =>
 
 app.use(morgan("dev"));
 
-/* app.use(notFoundErrorHandler);
-app.use(generalErrorHandler); */
-
-module.exports = { initializeServer, app };
+app.use(notFoundErrorHandler);
+app.use(generalErrorHandler);

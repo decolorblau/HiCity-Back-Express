@@ -1,8 +1,11 @@
-const debug = require("debug")("series:database");
+import { debug } from "console";
+import Debug from "debug";
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 
-const connectDB = (connectionDB) =>
+debug();
+
+export const connectDB = (connectionDB) =>
   new Promise<void>((resolve, reject) => {
     mongoose.set("debug", false);
 
@@ -30,5 +33,3 @@ const connectDB = (connectionDB) =>
       debug(chalk.green("DB disconnected"));
     });
   });
-
-exports = { connectDB };
