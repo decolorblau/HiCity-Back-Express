@@ -1,11 +1,9 @@
-const { Schema, model, Types } = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 interface User {
   name: string;
   email: string;
   password: string;
-  id: number;
-  listLandmarks: Array<{ id: number }>;
 }
 
 const userSchema: User = new Schema({
@@ -25,11 +23,7 @@ const userSchema: User = new Schema({
     minlength: 8,
     maxlength: 30,
   },
-  listsLandmarks: {
-    type: [Types.ObjectId],
-    ref: "Landmark",
-  },
 });
 const UserModel = model("User", userSchema, "Users");
 
-exports = { UserModel };
+export = { UserModel };
