@@ -19,11 +19,8 @@ const checkAuthorization = (req, res, next) => {
       next(error);
     } else {
       try {
-        const { id, username, admin } = jwt.verify(
-          token,
-          process.env.JWT_SECRET
-        );
-        req.userData = { id, username, admin };
+        const { id } = jwt.verify(token, process.env.JWT_SECRET);
+        req.userData = { id };
 
         next();
       } catch {
