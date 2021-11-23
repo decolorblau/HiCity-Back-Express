@@ -1,10 +1,14 @@
 {
-  "name": "HiCity-App",
+  "name": "hicity-app",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git"
+  },
   "author": "Claudia Font <claudiafontmarques@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/jest": "^27.0.3",
@@ -45,5 +49,15 @@
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix"
-  }
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "dist"
+    ]
+  },
+  "description": "",
+  "bugs": {
+    "url": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109/issues"
+  },
+  "homepage": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109#readme"
 }
