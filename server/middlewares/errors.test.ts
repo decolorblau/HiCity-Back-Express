@@ -41,7 +41,7 @@ describe("Given a generalErrorHandler", () => {
   describe("When it receives an error without instanceof ValidationError, without error statusCode and message", () => {
     test("Then it should return error statusCode 500 and 'General error' message", () => {
       const res = mockResponse();
-      let error = {};
+      const error = {};
 
       generalErrorHandler(error, null, res, null);
 
