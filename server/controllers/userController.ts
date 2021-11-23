@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../../database/models/user";
 import chalk from "chalk";
 import debug from "debug";
+import jwt from "jsonwebtoken";
 
 class NewError extends Error {
   code: number | undefined;
@@ -28,6 +29,42 @@ export const userSingUp = async (req, res, next) => {
   } catch {
     const error = new Error("Error creating the user");
     debug(chalk.red(error.message));
+    next(error);
+  }
+};
+
+export const loginUser = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      const error = new NewError("Wrong credentials");
+      debug(chalk.red(error.message));
+      error.code = 500;
+      next(error);
+    } else {
+      const rightPassword = await bcrypt.compare(password, user.password);
+      if (!rightPassword) {
+        const error = new NewError("Wrong credentials");
+        debug(chalk.red(error.message));
+        error.code = 401;
+        next(error);
+      } else {
+        const token = jwt.sign(
+          {
+            id: user.id,
+            email: user.email,
+          },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: 48 * 60 * 60,
+          }
+        );
+        res.json({ token });
+      }
+    }
+  } catch {
+    const error = new Error("Error logging in the user");
     next(error);
   }
 };
