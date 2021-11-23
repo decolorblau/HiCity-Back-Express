@@ -1,6 +1,4 @@
 import dotenv from "dotenv";
-import bcrypt from "bcrypt";
-
 import UserModel from "../../database/models/user";
 import { userSingUp } from "./userController";
 

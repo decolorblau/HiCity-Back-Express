@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import UserModel from "../../database/models/user";
 import chalk from "chalk";
 import debug from "debug";
 import jwt from "jsonwebtoken";
+import UserModel from "../../database/models/user";
 
 class NewError extends Error {
   code: number | undefined;
@@ -11,7 +11,7 @@ class NewError extends Error {
 export const userSingUp = async (req, res, next) => {
   const { name, password, email } = req.body;
   try {
-    const user = await UserModel.findOne({ email: email });
+    const user = await UserModel.findOne({ email });
     if (user) {
       const error = new NewError("This email is already registered");
       debug(chalk.red(error.message));
