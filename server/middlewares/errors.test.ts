@@ -17,7 +17,7 @@ describe("Given a notFoundErrorHandler", () => {
       notFoundErrorHandler(null, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith();
+      expect(res.json).toHaveBeenCalledWith(expectedError);
     });
   });
 });
@@ -48,7 +48,7 @@ describe("Given a generalErrorHandler", () => {
       generalErrorHandler(error, null, res, null);
 
       expect(res.status).toHaveBeenCalledWith(error.code);
-      expect(res.json).toHaveBeenCalledWith(error.message);
+      expect(res.json).toHaveBeenCalledWith({ error: error.message });
     });
   });
   describe("When it receives an error with instanceof ValidationError, with error code 400 and 'Bad request'", () => {
@@ -63,7 +63,7 @@ describe("Given a generalErrorHandler", () => {
       generalErrorHandler(error, null, res, null);
 
       expect(res.status).toHaveBeenCalledWith(error.code);
-      expect(res.json).toHaveBeenCalledWith(error.message);
+      expect(res.json).toHaveBeenCalledWith({ error: error.message });
     });
   });
 });

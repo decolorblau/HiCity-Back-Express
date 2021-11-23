@@ -1,12 +1,6 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from "mongoose";
 
-interface User {
-  name: string;
-  email: string;
-  password: string;
-}
-
-const userSchema: User = new Schema({
+const userSchema = new Schema({
   name: {
     type: String,
     require: true,

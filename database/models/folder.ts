@@ -1,13 +1,6 @@
-const { Schema, model, Types } = require("mongoose");
+import { Schema, model, Types } from "mongoose";
 
-interface Folder {
-  name: string;
-  userId: number;
-  creationDate: number | String;
-  listLandmarks: Array<number>;
-}
-
-const folderSchema: Folder = new Schema({
+const folderSchema = new Schema({
   name: {
     type: String,
     require: true,

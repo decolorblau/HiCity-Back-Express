@@ -1,9 +1,8 @@
-import { debug } from "console";
 import Debug from "debug";
-const chalk = require("chalk");
-const mongoose = require("mongoose");
+import chalk from "chalk";
+import mongoose from "mongoose";
 
-debug();
+const debug = Debug("HiCity:database");
 
 export const connectDB = (connectionDB) =>
   new Promise<void>((resolve, reject) => {
