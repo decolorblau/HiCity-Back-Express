@@ -24,7 +24,8 @@
     "dev": "nodemon index -q",
     "start": "node index",
     "test": "jest --watchAll --collect-coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "ts-compile": "npx tsc --watch"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
