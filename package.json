@@ -1,11 +1,15 @@
 {
-  "name": "HiCity-App",
+  "name": "hicity-app",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git"
+  },
   "author": "Claudia Font <claudiafontmarques@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
@@ -21,13 +25,19 @@
     "supertest": "^6.1.6"
   },
   "scripts": {
-    "dev": "nodemon index -q",
-    "start": "node index",
+    "dev": "nodemon dist/index.js -q",
+    "start": "node dist/index.js",
     "test": "jest --watchAll --collect-coverage",
     "prepare": "husky install",
-    "ts-compile": "npx tsc --watch"
+    "ts-compile": "tsc --watch"
   },
   "dependencies": {
+    "@babel/eslint-parser": "^7.16.3",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-typescript": "^7.16.0",
+    "@types/chalk": "^2.2.0",
+    "@types/cors": "^2.8.12",
+    "@types/node": "^16.11.9",
     "bcrypt": "^5.0.1",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
@@ -45,5 +55,16 @@
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix"
-  }
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "dist",
+      "/node_modules"
+    ]
+  },
+  "description": "",
+  "bugs": {
+    "url": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109/issues"
+  },
+  "homepage": "https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109#readme"
 }

@@ -1,16 +1,6 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from "mongoose";
 
-interface Landmark {
-  title: string;
-  city: string;
-  imageUrl: string;
-  category: string;
-  lastUpdate: number | String;
-  introduction: string;
-  description: string;
-}
-
-const landmarkSchema: Landmark = new Schema({
+const landmarkSchema = new Schema({
   title: {
     type: String,
     require: true,

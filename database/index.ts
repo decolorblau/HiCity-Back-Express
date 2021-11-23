@@ -1,6 +1,8 @@
-const debug = require("debug")("series:database");
-const chalk = require("chalk");
-const mongoose = require("mongoose");
+import Debug from "debug";
+import chalk from "chalk";
+import mongoose from "mongoose";
+
+const debug = Debug("HiCity:database");
 
 const connectDB = (connectionDB) =>
   new Promise<void>((resolve, reject) => {
@@ -31,4 +33,4 @@ const connectDB = (connectionDB) =>
     });
   });
 
-exports = { connectDB };
+export default connectDB;
