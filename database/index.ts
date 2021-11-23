@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 const debug = Debug("HiCity:database");
 
-export const connectDB = (connectionDB) =>
+const connectDB = (connectionDB) =>
   new Promise<void>((resolve, reject) => {
     mongoose.set("debug", false);
 
@@ -32,3 +32,5 @@ export const connectDB = (connectionDB) =>
       debug(chalk.green("DB disconnected"));
     });
   });
+
+export default connectDB;
