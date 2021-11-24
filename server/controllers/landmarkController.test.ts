@@ -1,5 +1,5 @@
 import landmarkModel from "../../database/models/landMarks";
-import getLandmarks from "./landmarkController";
+import { getLandmarks } from "./landmarkController";
 
 describe("Given the getPlatforms function", () => {
   describe("When it receives an object res and a resolved promise", () => {

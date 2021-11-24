@@ -1,7 +1,7 @@
 {
   "name": "hicity-app",
   "version": "1.0.0",
-  "main": "/dist/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git"
@@ -30,7 +30,8 @@
     "test": "jest",
     "test-dev": "jest --watchAll --collect-coverage",
     "prepare": "husky install",
-    "ts-compile": "tsc --watch"
+    "ts-compile": "tsc --watch",
+    "build": "tsc"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.16.3",
