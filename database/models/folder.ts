@@ -22,6 +22,6 @@ const folderSchema = new Schema({
     default: [],
   },
 });
-const FolderModel = model("User", folderSchema, "Users");
+const FolderModel = model("folder", folderSchema, "folders");
 
 export = { FolderModel };

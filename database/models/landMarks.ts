@@ -32,4 +32,4 @@ const landmarkSchema = new Schema({
 });
 const landmarkModel = model("landmark", landmarkSchema, "landmarks");
 
-export = { landmarkModel };
+export default landmarkModel;
