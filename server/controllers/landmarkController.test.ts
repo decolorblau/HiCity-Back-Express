@@ -1,7 +1,28 @@
 import landmarkModel from "../../database/models/landMarks";
-import { getLandmarks } from "./landmarkController";
+import { createLandmark, getLandmarks } from "./landmarkController";
 
-describe("Given the getPlatforms function", () => {
+jest.mock("../../database/models/landMarks.ts");
+
+interface IResponseTest {
+  status: () => void;
+  json: () => void;
+}
+
+class NewError extends Error {
+  code: number | undefined;
+}
+
+const mockResponse = () => {
+  const res: IResponseTest = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+  };
+  return res;
+};
+
+jest.setTimeout(20000);
+
+describe("Given the getLandmarks function", () => {
   describe("When it receives an object res and a resolved promise", () => {
     test("Then it should invoke the method json", async () => {
       const landmark = [
@@ -41,6 +62,68 @@ describe("Given the getPlatforms function", () => {
       await getLandmarks(null, res, next);
 
       expect(next).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+describe("Given a createLandmark function", () => {
+  describe("When it receives a request with a new landmark, a res object and a next function", () => {
+    test("Then it should invoke landmark create with a new landmark point", async () => {
+      const req = {
+        body: {
+          title: "Font",
+          city: "Barcelona",
+          imageUrl: "image",
+          category: "parque",
+          coordinates: {
+            latitude: 41.444914,
+            longitude: 2.074983,
+          },
+          introduction: "hello",
+          description: "this is a description",
+        },
+      };
+
+      const res = mockResponse();
+      const expectedStatus = 201;
+
+      landmarkModel.findOne = jest.fn().mockResolvedValue(null);
+      landmarkModel.create = jest.fn().mockResolvedValue(req.body);
+
+      await createLandmark(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(req.body);
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+    });
+    describe("And Landmark create rejects", () => {
+      test("Then it should invoke invoke next function with the error rejected", async () => {
+        const error = new NewError();
+
+        landmarkModel.create = jest.fn().mockRejectedValue(error);
+
+        const req = {
+          body: {
+            title: "",
+            city: "",
+            imageUrl: "",
+            coordinates: {
+              latitude: 1,
+              longitude: 2,
+            },
+            category: "",
+            description: "",
+          },
+        };
+        const res = {
+          json: jest.fn(),
+        };
+        const next = jest.fn();
+
+        await createLandmark(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(error.code).toBe(400);
+      });
     });
   });
 });

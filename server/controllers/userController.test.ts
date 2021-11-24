@@ -43,8 +43,8 @@ describe("Given the userSingUp function", () => {
       UserModel.create = jest.fn().mockResolvedValue(req.body);
       await userSingUp(req, res, () => {});
 
-      expect(res.json).toHaveBeenCalledWith(req.body);
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith(req.body);
     });
   });
 
@@ -131,7 +131,7 @@ describe("Given the loginUser function", () => {
     });
   });
 
-  describe("When it receives the req object, the next function and promise resolves, but the password is wrong", () => {
+  describe("When it receives the req object with correct email  and wrong password", () => {
     test("Then it should invoke the next function with a error", async () => {
       const req = {
         body: {
@@ -141,13 +141,19 @@ describe("Given the loginUser function", () => {
       };
 
       const next = jest.fn();
-      const error = new Error("Wrong credentials");
+      const error = new NewError("Wrong credentials");
+      error.code = 401;
+
+      UserModel.findOne = jest.fn().mockResolvedValue({
+        email: "hola@hola.com",
+        password: "hola",
+      });
 
       bcrypt.compare = jest.fn().mockResolvedValue(false);
-      UserModel.findOne = jest.fn().mockResolvedValue(null);
       await loginUser(req, null, next);
 
       expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0]).toHaveProperty("code", error.code);
     });
   });
 

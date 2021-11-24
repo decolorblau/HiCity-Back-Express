@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
 import chalk from "chalk";
-import debug from "debug";
+import Debug from "debug";
+
 import jwt from "jsonwebtoken";
 import UserModel from "../../database/models/user";
 
+const debug = Debug("HiCity:user");
 class NewError extends Error {
   code: number | undefined;
 }
