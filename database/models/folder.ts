@@ -19,6 +19,7 @@ const folderSchema = new Schema({
   listsLandmarks: {
     type: [Types.ObjectId],
     ref: "Landmark",
+    default: [],
   },
 });
 const FolderModel = model("User", folderSchema, "Users");

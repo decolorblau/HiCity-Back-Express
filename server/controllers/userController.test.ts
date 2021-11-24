@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import UserModel from "../../database/models/user";
-import { userSingUp } from "./userController";
+import { userSingUp, loginUser } from "./userController";
 
 dotenv.config();
 
@@ -86,6 +88,89 @@ describe("Given the userSingUp function", () => {
       expect(UserModel.findOne).toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(error);
       expect(next.mock.calls[0][0]).toHaveProperty("code", error.code);
+    });
+  });
+});
+
+describe("Given the loginUser function", () => {
+  describe("When it receives the req object and the promise rejects", () => {
+    test("Then it should invoke the next function with a error", async () => {
+      const req = {
+        body: {
+          email: "test@test.com",
+          password: "test",
+        },
+      };
+
+      const next = jest.fn();
+      const error = new Error("Error logging in the user");
+
+      UserModel.findOne = jest.fn().mockRejectedValue(null);
+      await loginUser(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe("When it receives the req object, the next function and promise resolves null", () => {
+    test("Then it should invoke the next function with a error", async () => {
+      const req = {
+        body: {
+          email: "test@test.com",
+          password: "test",
+        },
+      };
+
+      const next = jest.fn();
+      const error = new Error("Wrong credentials");
+
+      UserModel.findOne = jest.fn().mockResolvedValue(null);
+      await loginUser(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe("When it receives the req object, the next function and promise resolves, but the password is wrong", () => {
+    test("Then it should invoke the next function with a error", async () => {
+      const req = {
+        body: {
+          email: "test@test.com",
+          password: "test",
+        },
+      };
+
+      const next = jest.fn();
+      const error = new Error("Wrong credentials");
+
+      bcrypt.compare = jest.fn().mockResolvedValue(false);
+      UserModel.findOne = jest.fn().mockResolvedValue(null);
+      await loginUser(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe("When it receives the req object, the next function and promise resolves with all the credentials good", () => {
+    test("Then it should invoke the json method with", async () => {
+      const req = {
+        body: {
+          id: 1,
+          email: "test@test.com",
+          password: "test",
+        },
+      };
+
+      const res = mockResponse();
+
+      const expectedToken = 123;
+
+      bcrypt.compare = jest.fn().mockResolvedValue(true);
+      jwt.sign = jest.fn().mockReturnValue(expectedToken);
+      UserModel.findOne = jest.fn().mockResolvedValue(req.body);
+      await loginUser(req, res, () => {});
+
+      expect(res.json).toHaveBeenCalledWith({ token: expectedToken });
     });
   });
 });

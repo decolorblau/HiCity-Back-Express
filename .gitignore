@@ -106,4 +106,4 @@ dist
 # sonnarqube files
 .scannerwork
 node_modules
-sonar-project.properties
+
