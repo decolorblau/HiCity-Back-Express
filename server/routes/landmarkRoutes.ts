@@ -6,6 +6,7 @@ import {
   getLandmarks,
 } from "../controllers/landmarkController";
 import auth from "../middlewares/auth";
+import firebase from "../middlewares/firebase";
 
 const router = express.Router();
 
