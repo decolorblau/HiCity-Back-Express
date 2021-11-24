@@ -1,9 +1,13 @@
 import express from "express";
-import getLandmarks from "../controllers/landmarkController";
+import {
+  createLandmark,
+  getLandmarks,
+} from "../controllers/landmarkController";
+import auth from "../middlewares/auth";
 
 const router = express.Router();
 
 router.get("/", getLandmarks);
-router.post("/new", getLandmarks);
+router.post("/new", auth, createLandmark);
 
 export default router;
