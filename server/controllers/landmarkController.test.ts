@@ -95,35 +95,35 @@ describe("Given a createLandmark function", () => {
       expect(res.json).toHaveBeenCalledWith(req.body);
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
     });
-    describe("And Landmark create rejects", () => {
-      test("Then it should invoke invoke next function with the error rejected", async () => {
-        const error = new NewError();
+  });
+  describe("And Landmark create rejects", () => {
+    test("Then it should invoke invoke next function with the error rejected", async () => {
+      const error = new NewError();
 
-        landmarkModel.create = jest.fn().mockRejectedValue(error);
+      landmarkModel.create = jest.fn().mockRejectedValue(error);
 
-        const req = {
-          body: {
-            title: "",
-            city: "",
-            imageUrl: "",
-            coordinates: {
-              latitude: 1,
-              longitude: 2,
-            },
-            category: "",
-            description: "",
+      const req = {
+        body: {
+          title: "",
+          city: "",
+          imageUrl: "",
+          coordinates: {
+            latitude: 1,
+            longitude: 2,
           },
-        };
-        const res = {
-          json: jest.fn(),
-        };
-        const next = jest.fn();
+          category: "",
+          description: "",
+        },
+      };
+      const res = {
+        json: jest.fn(),
+      };
+      const next = jest.fn();
 
-        await createLandmark(req, res, next);
+      await createLandmark(req, res, next);
 
-        expect(next).toHaveBeenCalledWith(error);
-        expect(error.code).toBe(400);
-      });
+      expect(next).toHaveBeenCalledWith(error);
+      expect(error.code).toBe(400);
     });
   });
 });
