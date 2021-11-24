@@ -19,6 +19,16 @@ const landmarkSchema = new Schema({
     type: String,
     require: true,
   },
+  coordinates: {
+    latitude: {
+      type: Number,
+      require: true,
+    },
+    longitude: {
+      type: Number,
+      require: true,
+    },
+  },
   lastUpdate: {
     type: Date,
     default: Date.now,

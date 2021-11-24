@@ -1,4 +1,11 @@
+import Debug from "debug";
+import chalk from "chalk";
 import landmarkModel from "../../database/models/landMarks";
+
+const debug = Debug("HiCity:landmark");
+class NewError extends Error {
+  code: number | undefined;
+}
 
 export const getLandmarks = async (req, res, next) => {
   try {
@@ -10,13 +17,49 @@ export const getLandmarks = async (req, res, next) => {
 };
 
 export const createLandmark = async (req, res, next) => {
+  const {
+    title,
+    city,
+    imageUrl,
+    category,
+    coordinates,
+    lastUpdate,
+    introduction,
+    description,
+  } = req.body;
   try {
-    const landmark = req.body;
-    const newLandmark = await landmarkModel.create(landmark);
-    res.status(201).json(newLandmark);
+    const { latitude, longitude } = coordinates;
+    const landmark = await landmarkModel.findOne({
+      coordinates: {
+        latitude,
+        longitude,
+      },
+    });
+
+    if (landmark) {
+      const error: any = new NewError("This landmark already exists");
+      debug(chalk.red(error.message));
+      error.code = 400;
+      next(error);
+    } else {
+      const newLandmark = await landmarkModel.create({
+        title,
+        city,
+        imageUrl,
+        category,
+        coordinates,
+        lastUpdate,
+        introduction,
+        description,
+      });
+      res.status(201);
+      res.json(newLandmark);
+      debug(chalk.green("Landmark created correctly"));
+    }
   } catch (error) {
     error.code = 400;
     error.message = "Ouch! This is not a landmark!";
+    debug(chalk.red(error.message));
     next(error);
   }
 };
