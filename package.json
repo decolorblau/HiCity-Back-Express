@@ -1,7 +1,7 @@
 {
   "name": "hicity-app",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "/dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git"
