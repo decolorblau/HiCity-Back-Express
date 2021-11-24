@@ -1,4 +1,3 @@
-import { ValidationError } from "express-validation";
 import { notFoundErrorHandler, generalErrorHandler } from "./errors";
 
 const mockResponse = () => {
@@ -28,13 +27,13 @@ describe("Given a generalErrorHandler", () => {
     test("Then it should return error statusCode 400 and 'test error' message", () => {
       const res = mockResponse();
       const error = {
-        statusCode: 401,
+        code: 401,
         message: "test error",
       };
 
       generalErrorHandler(error, null, res, null);
 
-      expect(res.status).toHaveBeenCalledWith(error.statusCode);
+      expect(res.status).toHaveBeenCalledWith(error.code);
       expect(res.json).toHaveBeenCalledWith({ error: error.message });
     });
   });
@@ -47,21 +46,6 @@ describe("Given a generalErrorHandler", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "General error" });
-    });
-  });
-  describe("When it receives an error with instanceof ValidationError, with error statusCode 400 and 'Bad request'", () => {
-    test("Then it should return error statusCode 400 and 'Bad request", () => {
-      const error = new ValidationError("string validation", {
-        statusCode: 500,
-        error: new Error(),
-      });
-
-      const res = mockResponse();
-
-      generalErrorHandler(error, null, res, null);
-
-      expect(res.status).toHaveBeenCalledWith(error.statusCode);
-      expect(res.json).toHaveBeenCalledWith({ error: error.message });
     });
   });
 });

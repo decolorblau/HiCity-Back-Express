@@ -22,7 +22,7 @@ const connectDB = (connectionDB) =>
         debug(chalk.red("The database could not be started", error.message));
         debug(chalk.red(error.message));
 
-        reject();
+        reject(error);
         return;
       }
       debug(chalk.green("The database is connected"));

@@ -14,10 +14,8 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
-    maxlength: 30,
   },
 });
-const UserModel = model("User", userSchema, "Users");
+const UserModel = model("user", userSchema, "users");
 
 export default UserModel;

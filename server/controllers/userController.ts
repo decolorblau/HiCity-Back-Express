@@ -9,11 +9,11 @@ class NewError extends Error {
 }
 
 export const userSingUp = async (req, res, next) => {
-  const { name, password, email } = req.body;
+  const { name, email, password } = req.body;
   try {
     const user = await UserModel.findOne({ email });
     if (user) {
-      const error = new NewError("This email is already registered");
+      const error: any = new NewError("This email is already registered");
       debug(chalk.red(error.message));
       error.code = 400;
       next(error);

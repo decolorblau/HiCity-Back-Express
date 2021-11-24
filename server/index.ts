@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import Debug from "debug";
 
+import userRoutes from "./routes/userRoutes";
+
 import {
   notFoundErrorHandler,
   generalErrorHandler,
@@ -18,13 +20,11 @@ interface Error {
   message: string;
 }
 
-export const app = express();
-
+const app = express();
 app.use(cors());
-app.use(express.json());
 
-export const initializeServer = (port) =>
-  new Promise((resolve, reject) => {
+const initializeServer = (port) =>
+  new Promise((resolve) => {
     const server = app.listen(port, () => {
       debug(chalk.yellow(`Listening ${port} port`));
       resolve(server);
@@ -34,7 +34,6 @@ export const initializeServer = (port) =>
       if (error.code === "EADDRINUSE") {
         debug(chalk.red(`The port ${port} is in use.`));
       }
-      reject();
     });
     server.on("close", () => {
       debug(chalk.yellow("server express disconnected"));
@@ -42,6 +41,9 @@ export const initializeServer = (port) =>
   });
 
 app.use(morgan("dev"));
-
+app.use(express.json());
+app.use("/users", userRoutes);
 app.use(notFoundErrorHandler);
 app.use(generalErrorHandler);
+
+export { initializeServer, app };
