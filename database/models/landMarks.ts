@@ -29,7 +29,11 @@ const landmarkSchema = new Schema({
     minlength: 3,
     maxlength: 200,
   },
+  description: {
+    type: String,
+    require: true,
+  },
 });
 const landmarkModel = model("landmark", landmarkSchema, "landmarks");
 
-export = { landmarkModel };
+export default landmarkModel;
