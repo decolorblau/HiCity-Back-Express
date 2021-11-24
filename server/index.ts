@@ -6,6 +6,7 @@ import morgan from "morgan";
 import Debug from "debug";
 
 import userRoutes from "./routes/userRoutes";
+import landmarkRoutes from "./routes/landmarkRoutes";
 
 import {
   notFoundErrorHandler,
@@ -42,7 +43,8 @@ const initializeServer = (port) =>
 
 app.use(morgan("dev"));
 app.use(express.json());
-app.use("/users", userRoutes);
+app.use("/user", userRoutes);
+app.use("/landmark", landmarkRoutes);
 app.use(notFoundErrorHandler);
 app.use(generalErrorHandler);
 
