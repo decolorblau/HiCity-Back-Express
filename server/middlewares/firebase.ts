@@ -22,7 +22,7 @@ const firebase = async (req, res, next) => {
   } catch (error) {
     error.code = 400;
     error.message = "Something failed while uploading to firebase";
-    next(error);
+    next();
   }
 };
 

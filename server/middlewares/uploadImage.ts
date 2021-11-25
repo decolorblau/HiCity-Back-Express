@@ -12,7 +12,7 @@ const uploadImage = multer({
         ""
       );
 
-      const newFilename = `landmark - ${oldFilenameWithoutExtension}-${Date.now()}-${oldFilenameExtension}`;
+      const newFilename = `landmark-${oldFilenameWithoutExtension}-${Date.now()}-${oldFilenameExtension}`;
       callback(null, newFilename);
     },
   }),

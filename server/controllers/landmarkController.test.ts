@@ -178,10 +178,8 @@ describe("Given a createLandmark function", () => {
           title: "Font",
           city: "Barcelona",
           category: "parque",
-          coordinates: {
-            latitude: 41.444914,
-            longitude: 2.074983,
-          },
+          latitude: 41.444914,
+          longitude: 2.074983,
           introduction: "hello",
           description: "this is a description",
         },
@@ -210,10 +208,8 @@ describe("Given a createLandmark function", () => {
           title: "",
           city: "",
           imageUrl: "",
-          coordinates: {
-            latitude: 1,
-            longitude: 2,
-          },
+          latitude: 1,
+          longitude: 2,
           category: "",
           description: "",
         },
@@ -235,10 +231,8 @@ describe("Given a createLandmark function", () => {
         title: "Font",
         city: "Barcelona",
         category: "parque",
-        coordinates: {
-          latitude: 41.444914,
-          longitude: 2.074983,
-        },
+        latitude: 41.444914,
+        longitude: 2.074983,
         introduction: "hello",
         description: "this is a description",
       };
@@ -266,14 +260,13 @@ describe("Given the editLandmark function", () => {
   describe("When it receives a valid id and valid object req", () => {
     test("Then it should invoke the  function with update landmark", async () => {
       const req = {
+        file: { fileUrl: "fadfda" },
         landmarkData: {
           title: "",
           city: "",
           imageUrl: "",
-          coordinates: {
-            latitude: 1,
-            longitude: 2,
-          },
+          latitude: 1,
+          longitude: 2,
           category: "",
           description: "",
         },
@@ -281,12 +274,13 @@ describe("Given the editLandmark function", () => {
           id: 1,
         },
         body: {
-          name: "new-test",
+          title: "new-test",
           id: 1,
         },
       };
 
       const res = mockResponse();
+      landmarkModel.findById = jest.fn().mockResolvedValue(req.landmarkData);
       landmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(req.body);
       await editLandmark(req, res, null);
 
@@ -296,17 +290,15 @@ describe("Given the editLandmark function", () => {
     describe("and edit landmark rejects", () => {
       test("Then it should invoke invoke next function with the error rejected", async () => {
         const error = new NewError();
-        landmarkModel.findByIdAndUpdate = jest.fn().mockRejectedValue(error);
+        landmarkModel.findById = jest.fn().mockRejectedValue(error);
 
         const req = {
           landmarkData: {
             title: "",
             city: "",
             imageUrl: "",
-            coordinates: {
-              latitude: 1,
-              longitude: 2,
-            },
+            latitude: 1,
+            longitude: 2,
             category: "",
             description: "",
           },
@@ -337,10 +329,8 @@ describe("Given the editLandmark function", () => {
           title: "",
           city: "",
           imageUrl: "",
-          coordinates: {
-            latitude: 1,
-            longitude: 2,
-          },
+          latitude: 1,
+          longitude: 2,
           category: "",
           description: "",
         },
@@ -355,7 +345,7 @@ describe("Given the editLandmark function", () => {
 
       const next = jest.fn();
       const expectedError = new Error("Landmark not found.");
-      landmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
+      landmarkModel.findById = jest.fn().mockResolvedValue(null);
       await editLandmark(req, null, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
