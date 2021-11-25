@@ -9,7 +9,10 @@ import {
 import auth from "../middlewares/auth";
 import firebase from "../middlewares/firebase";
 import uploadImage from "../middlewares/uploadImage";
-import landmarkSchemaValidator from "../schemas/landmarkSchema";
+import {
+  landmarkCreateSchema,
+  landmarkEditSchema,
+} from "../schemas/landmarkSchema";
 
 const router = express.Router();
 
@@ -20,7 +23,7 @@ router.post(
   uploadImage.single("imageUrl"),
   firebase,
   auth,
-  validate(landmarkSchemaValidator),
+  validate(landmarkCreateSchema),
   createLandmark
 );
 router.put(
@@ -28,7 +31,7 @@ router.put(
   uploadImage.single("imageUrl"),
   firebase,
   auth,
-  validate(landmarkSchemaValidator),
+  validate(landmarkEditSchema),
   editLandmark
 );
 

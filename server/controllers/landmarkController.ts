@@ -35,25 +35,19 @@ export const getLandmarkById = async (req, res, next) => {
 
 export const createLandmark = async (req, res, next) => {
   const image = req.file ? req.file : { fileURL: "" };
-
   const {
     title,
     city,
     category,
-    coordinates,
+    latitude,
+    longitude,
     lastUpdate,
     introduction,
     description,
   } = req.body;
 
   try {
-    const { latitude, longitude } = coordinates;
-    const landmark = await landmarkModel.findOne({
-      coordinates: {
-        latitude,
-        longitude,
-      },
-    });
+    const landmark = await landmarkModel.findOne({ latitude, longitude });
 
     if (landmark) {
       const error: any = new NewError("This landmark already exists");
@@ -66,7 +60,8 @@ export const createLandmark = async (req, res, next) => {
         city,
         imageUrl: image.fileURL,
         category,
-        coordinates,
+        latitude,
+        longitude,
         lastUpdate,
         introduction,
         description,
@@ -84,41 +79,27 @@ export const createLandmark = async (req, res, next) => {
 };
 
 export const editLandmark = async (req, res, next) => {
-  const { id } = req.params;
-  const image = req.file ? req.file : { fileURL: "" };
-
+  const { idLandmark } = req.params;
   try {
-    const {
-      title,
-      city,
-      category,
-      coordinates,
-      lastUpdate,
-      introduction,
-      description,
-    } = req.body;
-    const newLandmark = await landmarkModel.findByIdAndUpdate(
-      id,
-      {
-        title,
-        city,
-        imageUrl: image.fileURL,
-        category,
-        coordinates,
-        lastUpdate,
-        introduction,
-        description,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!newLandmark) {
+    const { file } = req;
+    if (file) {
+      req.body.imageUrl = file.fileURL;
+    }
+
+    const landmark = await landmarkModel.findById(idLandmark);
+    if (!landmark) {
       const error = new NewError("Landmark not found.");
       error.code = 404;
       next(error);
     } else {
+      const newLandmark = await landmarkModel.findByIdAndUpdate(
+        idLandmark,
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
       res.status(200).json(newLandmark);
     }
   } catch (error) {
