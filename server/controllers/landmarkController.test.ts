@@ -3,6 +3,7 @@ import {
   createLandmark,
   getLandmarks,
   getLandmarkById,
+  editLandmark,
 } from "./landmarkController";
 
 jest.mock("../../database/models/landMarks.ts");
@@ -226,6 +227,139 @@ describe("Given a createLandmark function", () => {
 
       expect(next).toHaveBeenCalledWith(error);
       expect(error.code).toBe(400);
+    });
+  });
+  describe("And Landmark create rejects", () => {
+    test("Then it should invoke invoke next function with the error rejected", async () => {
+      const landmark = {
+        title: "Font",
+        city: "Barcelona",
+        category: "parque",
+        coordinates: {
+          latitude: 41.444914,
+          longitude: 2.074983,
+        },
+        introduction: "hello",
+        description: "this is a description",
+      };
+
+      const req = {
+        body: landmark,
+      };
+      const res = mockResponse();
+      const error = new NewError("This landmark already exists");
+      error.code = 400;
+
+      landmarkModel.findOne = jest.fn().mockResolvedValue(landmark);
+
+      const next = jest.fn();
+
+      await createLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(error.code).toBe(400);
+    });
+  });
+});
+
+describe("Given the editLandmark function", () => {
+  describe("When it receives a valid id and valid object req", () => {
+    test("Then it should invoke the  function with update landmark", async () => {
+      const req = {
+        landmarkData: {
+          title: "",
+          city: "",
+          imageUrl: "",
+          coordinates: {
+            latitude: 1,
+            longitude: 2,
+          },
+          category: "",
+          description: "",
+        },
+        params: {
+          id: 1,
+        },
+        body: {
+          name: "new-test",
+          id: 1,
+        },
+      };
+
+      const res = mockResponse();
+      landmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(req.body);
+      await editLandmark(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(req.body);
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+    describe("and edit landmark rejects", () => {
+      test("Then it should invoke invoke next function with the error rejected", async () => {
+        const error = new NewError();
+        landmarkModel.findByIdAndUpdate = jest.fn().mockRejectedValue(error);
+
+        const req = {
+          landmarkData: {
+            title: "",
+            city: "",
+            imageUrl: "",
+            coordinates: {
+              latitude: 1,
+              longitude: 2,
+            },
+            category: "",
+            description: "",
+          },
+          params: {
+            id: 1,
+          },
+          body: {
+            name: "new-test",
+            id: 1,
+          },
+        };
+
+        const res = mockResponse();
+        const next = jest.fn();
+
+        await editLandmark(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(next.mock.calls[0][0].code).toBe(400);
+      });
+    });
+  });
+
+  describe("When it receives a resolved function with a invalid id", () => {
+    test("Then it should invoke the  function with a expectedError", async () => {
+      const req = {
+        landmarkData: {
+          title: "",
+          city: "",
+          imageUrl: "",
+          coordinates: {
+            latitude: 1,
+            longitude: 2,
+          },
+          category: "",
+          description: "",
+        },
+        params: {
+          id: 1,
+        },
+        body: {
+          titel: "new-test",
+          id: 2,
+        },
+      };
+
+      const next = jest.fn();
+      const expectedError = new Error("Landmark not found.");
+      landmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
+      await editLandmark(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(expectedError);
+      expect(next.mock.calls[0][0].code).toBe(404);
     });
   });
 });

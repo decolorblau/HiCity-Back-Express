@@ -82,3 +82,26 @@ export const createLandmark = async (req, res, next) => {
     next(error);
   }
 };
+
+export const editLandmark = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const newLandmark = await landmarkModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!newLandmark) {
+      const error = new NewError("Landmark not found.");
+      error.code = 404;
+      next(error);
+    } else {
+      res.status(200).json(newLandmark);
+    }
+  } catch (error) {
+    error.code = 400;
+    error.message = "Ouch! This is not a landmark!";
+    debug(chalk.red(error.message));
+    next(error);
+  }
+};

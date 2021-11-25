@@ -4,19 +4,19 @@
 
 ## USER ROUTES:
 
-POST - "user/login" - Body: {email, password}
+FET - POST - "user/login" - Body: {email, password}
 
-POST - "user/register" - Body: {name, email, password} - if find email --> error email exist
+FET - POST - "user/register" - Body: {name, email, password} - if find email --> error email exist
 
 ## LANDMARK:
 
 ## LANDMARK ROUTES: (ONL POST PUT NEED TOKEN)
 
-GET - "landmark/"; nothing
+FET - GET - "landmark/"; nothing
 
-GET - "landmark/:id" - Param {landmarkId}
+FET - GET - "landmark/:id" - Param {landmarkId}
 
-POST - "landmark/new" + auth(token - userID) - firebase - Body { title, city, imageUrl, category, coordinates,lastUpdate, introduction, description,} -if find coordinates --> error landmark exist
+FET - POST - "landmark/new" + auth(token - userID) - firebase - Body { title, city, imageUrl, category, coordinates,lastUpdate, introduction, description,} -if find coordinates --> error landmark exist
 
 PUT - "landmark/:id" + auth(token - userID) - firebase - Param {landmarkId} + Body { title, city, imageUrl, category, coordinates, lastUpdate, introduction, description,}
 
