@@ -1,5 +1,5 @@
 import FolderModel from "../../database/models/folder";
-import getFolders from "./folderController";
+import { getFolders } from "./folderController";
 
 jest.mock("../../database/models/landMarks.ts");
 

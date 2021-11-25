@@ -1,6 +1,7 @@
 /* import Debug from "debug"; */
 /* import chalk from "chalk"; */
 import FolderModel from "../../database/models/folder";
+import UserModel from "../../database/models/user";
 
 /* const debug = Debug("HiCity:folder"); */
 
@@ -8,7 +9,7 @@ import FolderModel from "../../database/models/folder";
   code: number | undefined;
 } */
 
-const getFolders = async (req, res, next) => {
+export const getFolders = async (req, res, next) => {
   try {
     const folders = await FolderModel.find();
     res.json(folders);
@@ -17,4 +18,13 @@ const getFolders = async (req, res, next) => {
   }
 };
 
-export default getFolders;
+export const getUserFolders = async (req, res, next) => {
+  try {
+    const userFolders = await UserModel.findById(req.id).populate("folders");
+    res.json(userFolders);
+  } catch (error) {
+    error.code = 400;
+    error.message = "Could not get folders";
+    next(error);
+  }
+};
