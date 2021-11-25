@@ -16,17 +16,36 @@ export const getLandmarks = async (req, res, next) => {
   }
 };
 
+export const getLandmarkById = async (req, res, next) => {
+  const { idLandmark } = req.params;
+  try {
+    const searchedLandmark = await landmarkModel.findById(idLandmark);
+    if (searchedLandmark) {
+      res.json(searchedLandmark);
+    } else {
+      const error = new NewError("Landmark not found");
+      error.code = 404;
+      next(error);
+    }
+  } catch (error) {
+    error.code = 400;
+    next(error);
+  }
+};
+
 export const createLandmark = async (req, res, next) => {
+  const image = req.file ? req.file : { fileURL: "" };
+
   const {
     title,
     city,
-    imageUrl,
     category,
     coordinates,
     lastUpdate,
     introduction,
     description,
   } = req.body;
+
   try {
     const { latitude, longitude } = coordinates;
     const landmark = await landmarkModel.findOne({
@@ -45,7 +64,7 @@ export const createLandmark = async (req, res, next) => {
       const newLandmark = await landmarkModel.create({
         title,
         city,
-        imageUrl,
+        imageUrl: image.fileURL,
         category,
         coordinates,
         lastUpdate,
