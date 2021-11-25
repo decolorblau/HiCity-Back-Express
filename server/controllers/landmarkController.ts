@@ -85,12 +85,35 @@ export const createLandmark = async (req, res, next) => {
 
 export const editLandmark = async (req, res, next) => {
   const { id } = req.params;
+  const image = req.file ? req.file : { fileURL: "" };
 
   try {
-    const newLandmark = await landmarkModel.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const {
+      title,
+      city,
+      category,
+      coordinates,
+      lastUpdate,
+      introduction,
+      description,
+    } = req.body;
+    const newLandmark = await landmarkModel.findByIdAndUpdate(
+      id,
+      {
+        title,
+        city,
+        imageUrl: image.fileURL,
+        category,
+        coordinates,
+        lastUpdate,
+        introduction,
+        description,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!newLandmark) {
       const error = new NewError("Landmark not found.");
       error.code = 404;
