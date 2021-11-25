@@ -18,7 +18,7 @@ FET - GET - "landmark/:id" - Param {landmarkId}
 
 FET - POST - "landmark/new" + auth(token - userID) - firebase - Body { title, city, imageUrl, category, coordinates,lastUpdate, introduction, description,} -if find coordinates --> error landmark exist
 
-PUT - "landmark/:id" + auth(token - userID) - firebase - Param {landmarkId} + Body { title, city, imageUrl, category, coordinates, lastUpdate, introduction, description,}
+FET - PUT - "landmark/:id" + auth(token - userID) - firebase - Param {landmarkId} + Body { title, city, imageUrl, category, coordinates, lastUpdate, introduction, description,}
 
 ## FOLDER:
 
