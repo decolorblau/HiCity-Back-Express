@@ -24,4 +24,4 @@ const folderSchema = new Schema({
 });
 const FolderModel = model("folder", folderSchema, "folders");
 
-export = { FolderModel };
+export default FolderModel;

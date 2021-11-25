@@ -42,6 +42,6 @@ const landmarkSchema = new Schema({
     require: true,
   },
 });
-const landmarkModel = model("landmark", landmarkSchema, "landmarks");
+const LandmarkModel = model("landmark", landmarkSchema, "landmarks");
 
-export default landmarkModel;
+export default LandmarkModel;

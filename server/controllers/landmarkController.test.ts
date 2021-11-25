@@ -1,4 +1,4 @@
-import landmarkModel from "../../database/models/landMarks";
+import LandmarkModel from "../../database/models/landMarks";
 import {
   createLandmark,
   getLandmarks,
@@ -45,21 +45,21 @@ describe("Given the getLandmarks function", () => {
         },
       ];
 
-      landmarkModel.find = jest.fn().mockResolvedValue(landmark);
+      LandmarkModel.find = jest.fn().mockResolvedValue(landmark);
       const res = {
         json: jest.fn(),
       };
 
       await getLandmarks(null, res, null);
 
-      expect(landmarkModel.find).toHaveBeenCalledTimes(1);
+      expect(LandmarkModel.find).toHaveBeenCalledTimes(1);
       expect(res.json).toHaveBeenLastCalledWith(landmark);
     });
   });
 
   describe("When it receives an object res and a rejected promise", () => {
     test("Then it should invoke the next function", async () => {
-      landmarkModel.find = jest.fn().mockRejectedValue(null);
+      LandmarkModel.find = jest.fn().mockRejectedValue(null);
       const res = {
         json: jest.fn(),
       };
@@ -74,8 +74,8 @@ describe("Given the getLandmarks function", () => {
 
 describe("Given a getLandmarkById function", () => {
   describe("When it receives a request with an id 2, a res object and a next function", () => {
-    test("Then it should invoke landmarkModel.findById with a 2", async () => {
-      landmarkModel.findById = jest.fn().mockRejectedValue({});
+    test("Then it should invoke LandmarkModel.findById with a 2", async () => {
+      LandmarkModel.findById = jest.fn().mockRejectedValue({});
       const idLandmark = 2;
       const req = {
         params: {
@@ -89,12 +89,12 @@ describe("Given a getLandmarkById function", () => {
 
       await getLandmarkById(req, res, next);
 
-      expect(landmarkModel.findById).toHaveBeenCalledWith(idLandmark);
+      expect(LandmarkModel.findById).toHaveBeenCalledWith(idLandmark);
     });
     describe("And Landmark.findById rejects", () => {
       test("Then it should invoke invoke next function with the error rejected", async () => {
         const error = new NewError();
-        landmarkModel.findById = jest.fn().mockRejectedValue(error);
+        LandmarkModel.findById = jest.fn().mockRejectedValue(error);
         const idLandmark = 0;
 
         const req = {
@@ -129,7 +129,7 @@ describe("Given a getLandmarkById function", () => {
           description:
             "A l’obaga del cim del Tibidabo, tocant a Vallvidrera, en un fondal d’una atracció singular s’hi amaga la font de la Budellera, la més popular d’entre les que es conserven al Parc de Collserola, ordenada a base de murs, terrasses i escales, data de la segona meitat del segle XIX. L’entorn de la Font es va restaurar el 1988 inspirant-se amb el projecte original de J.C. N. Forestier (1918). També s’hi col·locà, una font de xarxa i una obra d’en Tàpies que representa l’escut de Barcelona. Sobre l’origen del topònim hi ha versions diferents. Una el relaciona amb les propietats medicinals de l’aigua per prevenir i curar els mals d’estómac. L’altra fa referència a una casa que hi havia als seus peus, en la qual hi fabricaven cordes per guitarres l’any 1860.",
         };
-        landmarkModel.findById = jest.fn().mockResolvedValue(budellera);
+        LandmarkModel.findById = jest.fn().mockResolvedValue(budellera);
         const req = {
           params: {
             idLandmark,
@@ -150,7 +150,7 @@ describe("Given a getLandmarkById function", () => {
         const error = new NewError("Landmark not found");
         error.code = 404;
 
-        landmarkModel.findById = jest.fn().mockResolvedValue(undefined);
+        LandmarkModel.findById = jest.fn().mockResolvedValue(undefined);
         const req = {
           params: {
             idLandmark,
@@ -188,8 +188,8 @@ describe("Given a createLandmark function", () => {
       const res = mockResponse();
       const expectedStatus = 201;
 
-      landmarkModel.findOne = jest.fn().mockResolvedValue(null);
-      landmarkModel.create = jest.fn().mockResolvedValue(req.body);
+      LandmarkModel.findOne = jest.fn().mockResolvedValue(null);
+      LandmarkModel.create = jest.fn().mockResolvedValue(req.body);
 
       await createLandmark(req, res, null);
 
@@ -201,7 +201,7 @@ describe("Given a createLandmark function", () => {
     test("Then it should invoke invoke next function with the error rejected", async () => {
       const error = new NewError();
 
-      landmarkModel.create = jest.fn().mockRejectedValue(error);
+      LandmarkModel.create = jest.fn().mockRejectedValue(error);
 
       const req = {
         body: {
@@ -244,7 +244,7 @@ describe("Given a createLandmark function", () => {
       const error = new NewError("This landmark already exists");
       error.code = 400;
 
-      landmarkModel.findOne = jest.fn().mockResolvedValue(landmark);
+      LandmarkModel.findOne = jest.fn().mockResolvedValue(landmark);
 
       const next = jest.fn();
 
@@ -280,8 +280,8 @@ describe("Given the editLandmark function", () => {
       };
 
       const res = mockResponse();
-      landmarkModel.findById = jest.fn().mockResolvedValue(req.landmarkData);
-      landmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(req.body);
+      LandmarkModel.findById = jest.fn().mockResolvedValue(req.landmarkData);
+      LandmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(req.body);
       await editLandmark(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(req.body);
@@ -290,7 +290,7 @@ describe("Given the editLandmark function", () => {
     describe("and edit landmark rejects", () => {
       test("Then it should invoke invoke next function with the error rejected", async () => {
         const error = new NewError();
-        landmarkModel.findById = jest.fn().mockRejectedValue(error);
+        LandmarkModel.findById = jest.fn().mockRejectedValue(error);
 
         const req = {
           landmarkData: {
@@ -345,7 +345,7 @@ describe("Given the editLandmark function", () => {
 
       const next = jest.fn();
       const expectedError = new Error("Landmark not found.");
-      landmarkModel.findById = jest.fn().mockResolvedValue(null);
+      LandmarkModel.findById = jest.fn().mockResolvedValue(null);
       await editLandmark(req, null, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);

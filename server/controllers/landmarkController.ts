@@ -1,6 +1,6 @@
 import Debug from "debug";
 import chalk from "chalk";
-import landmarkModel from "../../database/models/landMarks";
+import LandmarkModel from "../../database/models/landMarks";
 
 const debug = Debug("HiCity:landmark");
 class NewError extends Error {
@@ -9,7 +9,7 @@ class NewError extends Error {
 
 export const getLandmarks = async (req, res, next) => {
   try {
-    const landmarks = await landmarkModel.find();
+    const landmarks = await LandmarkModel.find();
     res.json(landmarks);
   } catch (error) {
     next(error);
@@ -19,7 +19,7 @@ export const getLandmarks = async (req, res, next) => {
 export const getLandmarkById = async (req, res, next) => {
   const { idLandmark } = req.params;
   try {
-    const searchedLandmark = await landmarkModel.findById(idLandmark);
+    const searchedLandmark = await LandmarkModel.findById(idLandmark);
     if (searchedLandmark) {
       res.json(searchedLandmark);
     } else {
@@ -47,7 +47,7 @@ export const createLandmark = async (req, res, next) => {
   } = req.body;
 
   try {
-    const landmark = await landmarkModel.findOne({ latitude, longitude });
+    const landmark = await LandmarkModel.findOne({ latitude, longitude });
 
     if (landmark) {
       const error: any = new NewError("This landmark already exists");
@@ -55,7 +55,7 @@ export const createLandmark = async (req, res, next) => {
       error.code = 400;
       next(error);
     } else {
-      const newLandmark = await landmarkModel.create({
+      const newLandmark = await LandmarkModel.create({
         title,
         city,
         imageUrl: image.fileURL,
@@ -85,14 +85,15 @@ export const editLandmark = async (req, res, next) => {
     if (file) {
       req.body.imageUrl = file.fileURL;
     }
+    req.body.lastUpdate = Date.now();
 
-    const landmark = await landmarkModel.findById(idLandmark);
+    const landmark = await LandmarkModel.findById(idLandmark);
     if (!landmark) {
       const error = new NewError("Landmark not found.");
       error.code = 404;
       next(error);
     } else {
-      const newLandmark = await landmarkModel.findByIdAndUpdate(
+      const newLandmark = await LandmarkModel.findByIdAndUpdate(
         idLandmark,
         req.body,
         {
