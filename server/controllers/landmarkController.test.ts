@@ -1,5 +1,9 @@
 import landmarkModel from "../../database/models/landMarks";
-import { createLandmark, getLandmarks } from "./landmarkController";
+import {
+  createLandmark,
+  getLandmarks,
+  getLandmarkById,
+} from "./landmarkController";
 
 jest.mock("../../database/models/landMarks.ts");
 
@@ -31,6 +35,7 @@ describe("Given the getLandmarks function", () => {
           city: "Barcelona",
           imageUrl:
             "https://offloadmedia.feverup.com/barcelonasecreta.com/wp-content/uploads/2019/02/09111259/31938192_1935134759883440_7096267355839266816_n-1024x597.jpg",
+          imagePath: "budellera.jpg",
           category: "parque",
           introduction:
             "El torrent de la Budellera és un petit curs d'aigua de Collserola, que neix a la font de la Budellera.",
@@ -66,6 +71,104 @@ describe("Given the getLandmarks function", () => {
   });
 });
 
+describe("Given a getLandmarkById function", () => {
+  describe("When it receives a request with an id 2, a res object and a next function", () => {
+    test("Then it should invoke landmarkModel.findById with a 2", async () => {
+      landmarkModel.findById = jest.fn().mockRejectedValue({});
+      const idLandmark = 2;
+      const req = {
+        params: {
+          idLandmark,
+        },
+      };
+      const res = {
+        json: () => {},
+      };
+      const next = () => {};
+
+      await getLandmarkById(req, res, next);
+
+      expect(landmarkModel.findById).toHaveBeenCalledWith(idLandmark);
+    });
+    describe("And Landmark.findById rejects", () => {
+      test("Then it should invoke invoke next function with the error rejected", async () => {
+        const error = new NewError();
+        landmarkModel.findById = jest.fn().mockRejectedValue(error);
+        const idLandmark = 0;
+
+        const req = {
+          params: {
+            idLandmark,
+          },
+        };
+
+        const res = {
+          json: jest.fn(),
+        };
+        const next = jest.fn();
+
+        await getLandmarkById(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(error.code).toBe(400);
+      });
+    });
+    describe("And Landmark.findById resolves to Budellera", () => {
+      test("Then it should invoke res. json with a Budellera", async () => {
+        const idLandmark = 2;
+        const budellera = {
+          title: "Font de la Budellera",
+          city: "Barcelona",
+          imageUrl:
+            "https://offloadmedia.feverup.com/barcelonasecreta.com/wp-content/uploads/2019/02/09111259/31938192_1935134759883440_7096267355839266816_n-1024x597.jpg",
+          imagePath: "budellera.jpg",
+          category: "parque",
+          introduction:
+            "El torrent de la Budellera és un petit curs d'aigua de Collserola, que neix a la font de la Budellera.",
+          description:
+            "A l’obaga del cim del Tibidabo, tocant a Vallvidrera, en un fondal d’una atracció singular s’hi amaga la font de la Budellera, la més popular d’entre les que es conserven al Parc de Collserola, ordenada a base de murs, terrasses i escales, data de la segona meitat del segle XIX. L’entorn de la Font es va restaurar el 1988 inspirant-se amb el projecte original de J.C. N. Forestier (1918). També s’hi col·locà, una font de xarxa i una obra d’en Tàpies que representa l’escut de Barcelona. Sobre l’origen del topònim hi ha versions diferents. Una el relaciona amb les propietats medicinals de l’aigua per prevenir i curar els mals d’estómac. L’altra fa referència a una casa que hi havia als seus peus, en la qual hi fabricaven cordes per guitarres l’any 1860.",
+        };
+        landmarkModel.findById = jest.fn().mockResolvedValue(budellera);
+        const req = {
+          params: {
+            idLandmark,
+          },
+        };
+        const res = {
+          json: jest.fn(),
+        };
+
+        await getLandmarkById(req, res, null);
+
+        expect(res.json).toHaveBeenCalledWith(budellera);
+      });
+    });
+    describe("And Pet.findById resolves to undefined", () => {
+      test("Then it should invoke next function with the error", async () => {
+        const idLandmark = 2;
+        const error = new NewError("Landmark not found");
+        error.code = 404;
+
+        landmarkModel.findById = jest.fn().mockResolvedValue(undefined);
+        const req = {
+          params: {
+            idLandmark,
+          },
+        };
+        const res = {
+          json: jest.fn(),
+        };
+        const next = jest.fn();
+
+        await getLandmarkById(req, res, next);
+
+        expect(error.code).toBe(404);
+        expect(next).toHaveBeenCalledWith(error);
+      });
+    });
+  });
+});
+
 describe("Given a createLandmark function", () => {
   describe("When it receives a request with a new landmark, a res object and a next function", () => {
     test("Then it should invoke landmark create with a new landmark point", async () => {
@@ -73,7 +176,6 @@ describe("Given a createLandmark function", () => {
         body: {
           title: "Font",
           city: "Barcelona",
-          imageUrl: "image",
           category: "parque",
           coordinates: {
             latitude: 41.444914,

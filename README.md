@@ -16,9 +16,9 @@ GET - "landmark/"; nothing
 
 GET - "landmark/:id" - Param {landmarkId}
 
-POST - "landmark/new" + auth(token - userID) - firabase - Body { title, city, imageUrl, category, coordinates,lastUpdate, introduction, description,} -if find coordinates --> error landmark exist
+POST - "landmark/new" + auth(token - userID) - firebase - Body { title, city, imageUrl, category, coordinates,lastUpdate, introduction, description,} -if find coordinates --> error landmark exist
 
-PUT - "landmark/:id" + auth(token - userID) - firabase - Param {landmarkId} + Body { title, city, imageUrl, category, coordinates, lastUpdate, introduction, description,}
+PUT - "landmark/:id" + auth(token - userID) - firebase - Param {landmarkId} + Body { title, city, imageUrl, category, coordinates, lastUpdate, introduction, description,}
 
 ## FOLDER:
 

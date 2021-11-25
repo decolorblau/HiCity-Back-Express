@@ -15,6 +15,10 @@ const landmarkSchema = new Schema({
     type: String,
     require: true,
   },
+  imageLocal: {
+    type: String,
+    require: true,
+  },
   category: {
     type: String,
     require: true,

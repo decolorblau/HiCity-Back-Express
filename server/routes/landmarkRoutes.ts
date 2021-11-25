@@ -1,33 +1,23 @@
 import express from "express";
-import multer from "multer";
-import path from "path";
 import {
   createLandmark,
   getLandmarks,
+  getLandmarkById,
 } from "../controllers/landmarkController";
 import auth from "../middlewares/auth";
 import firebase from "../middlewares/firebase";
+import uploadImage from "../middlewares/uploadImage";
 
 const router = express.Router();
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: "images",
-    filename: (req, file, callback) => {
-      const oldFilename = file.originalname;
-      const oldFilenameExtension = path.extname(oldFilename);
-      const oldFilenameWithoutExtension = oldFilename.replace(
-        oldFilenameExtension,
-        ""
-      );
-
-      const newFilename = `${oldFilenameWithoutExtension}-${Date.now()}-${oldFilenameExtension}`;
-      callback(null, newFilename);
-    },
-  }),
-});
-
 router.get("/", getLandmarks);
-router.post("/new", auth, upload.single("imageUrl"), firebase, createLandmark);
+router.get("/:idLandmark", getLandmarkById);
+router.post(
+  "/new",
+  uploadImage.single("imageUrl"),
+  firebase,
+  auth,
+  createLandmark
+);
 
 export default router;
