@@ -16,7 +16,7 @@ const folderSchema = new Schema({
     ref: "User",
     require: true,
   },
-  listsLandmarks: {
+  listLandmarks: {
     type: [Types.ObjectId],
     ref: "Landmark",
     default: [],
