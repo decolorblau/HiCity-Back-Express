@@ -1,6 +1,7 @@
 import Debug from "debug";
 import chalk from "chalk";
 import LandmarkModel from "../../database/models/landMarks";
+import FolderModel from "../../database/models/folder";
 
 const debug = Debug("HiCity:landmark");
 class NewError extends Error {
@@ -107,6 +108,19 @@ export const editLandmark = async (req, res, next) => {
     error.code = 400;
     error.message = "Ouch! This is not a landmark!";
     debug(chalk.red(error.message));
+    next(error);
+  }
+};
+
+export const getFolderLandmark = async (req, res, next) => {
+  try {
+    const folderLandmarks = await FolderModel.findById(req.idFolder).populate(
+      "landmarks"
+    );
+    res.json(folderLandmarks.landmarks);
+  } catch (error) {
+    error.code = 400;
+    error.message = "Could not get landmarks";
     next(error);
   }
 };

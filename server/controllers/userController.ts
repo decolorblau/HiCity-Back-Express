@@ -25,6 +25,7 @@ export const userSingUp = async (req, res, next) => {
         email,
         password: await bcrypt.hash(password, 10),
       });
+
       res.status(201).json(newUser);
       debug(chalk.green("User registered correctly"));
     }
@@ -56,6 +57,7 @@ export const loginUser = async (req, res, next) => {
           {
             id: user.id,
             email: user.email,
+            folders: user.folders,
           },
           process.env.JWT_SECRET,
           {
@@ -67,6 +69,15 @@ export const loginUser = async (req, res, next) => {
     }
   } catch {
     const error = new Error("Error logging in the user");
+    next(error);
+  }
+};
+
+export const getUsers = async (req, res, next) => {
+  try {
+    const users = await UserModel.find();
+    res.json(users);
+  } catch (error) {
     next(error);
   }
 };

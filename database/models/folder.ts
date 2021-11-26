@@ -6,20 +6,20 @@ const folderSchema = new Schema({
     require: true,
     minlength: 1,
     maxlength: 30,
+    default: "the main folder",
   },
   creationDate: {
     type: Date,
     default: Date.now,
   },
+  landmarks: {
+    type: [Types.ObjectId],
+    ref: "landmark",
+    default: [],
+  },
   userId: {
     type: Types.ObjectId,
-    ref: "User",
-    require: true,
-  },
-  listLandmarks: {
-    type: [Types.ObjectId],
-    ref: "Landmark",
-    default: [],
+    ref: "user",
   },
 });
 const FolderModel = model("folder", folderSchema, "folders");

@@ -1,11 +1,15 @@
 import express from "express";
 import { validate } from "express-validation";
-import { loginUser, userSingUp } from "../controllers/userController";
-import userSchemaValidator from "../schemas/userSchema";
+import { getUsers, loginUser, userSingUp } from "../controllers/userController";
+import {
+  loginSchemaValidator,
+  registerSchemaValidator,
+} from "../schemas/userSchema";
 
 const router = express.Router();
 
-router.post("/register", validate(userSchemaValidator), userSingUp);
-router.post("/login", validate(userSchemaValidator), loginUser);
+router.post("/register", validate(registerSchemaValidator), userSingUp);
+router.post("/login", validate(loginSchemaValidator), loginUser);
+router.get("/users", getUsers);
 
 export default router;
