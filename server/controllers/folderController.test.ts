@@ -67,7 +67,7 @@ describe("Given the getUsersFolders function", () => {
       };
       const res = mockResponse();
 
-      UserModel.find = jest.fn().mockReturnValue({
+      UserModel.findById = jest.fn().mockReturnValue({
         populate: jest.fn().mockResolvedValue(userFolders),
       });
 
@@ -84,12 +84,12 @@ describe("Given the getUsersFolders function", () => {
           id: "3532525",
         },
       };
-
-      FolderModel.find = jest.fn().mockReturnValue({
-        populate: jest.fn().mockResolvedValue(null),
-      });
       const res = mockResponse();
       const next = jest.fn();
+
+      UserModel.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue(null),
+      });
 
       await getUserFolder(req, res, next);
 
@@ -99,84 +99,86 @@ describe("Given the getUsersFolders function", () => {
 });
 
 describe("Given a getUserFolderById function", () => {
-  describe("When it receives a request with an id 2, a res object and a next function", () => {
-    test("Then it should invoke FolderModel.findById with a 2", async () => {
+  describe("And Folder.findById rejects", () => {
+    test("Then it should invoke invoke next function with the error rejected", async () => {
+      const error = new NewError();
+      const idFolder = 0;
+      const req = {
+        params: {
+          userId: 4,
+          idFolder,
+        },
+      };
+
+      FolderModel.findById = jest.fn().mockRejectedValue(error);
+
+      const res = mockResponse();
+      const next = jest.fn();
+
+      await getUserFolderById(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(error.code).toBe(400);
+    });
+  });
+  describe("And Folder.findById resolves to folderUserId and userId and userData id is equal", () => {
+    test("Then it should invoke res. json with a folderUserId", async () => {
       const idFolder = 2;
       const req = {
         params: {
           idFolder,
         },
+        userData: {
+          id: "4",
+        },
       };
+
+      const folderUserId = {
+        userId: "4",
+        name: "restaurant",
+        landmarks: ["dfafd", "3rrrf344"],
+        creationData: "4567890'098765",
+      };
+
+      const res = mockResponse();
+
+      FolderModel.findById = jest.fn().mockResolvedValue(folderUserId);
+
+      await getUserFolderById(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(folderUserId);
+    });
+  });
+  describe("And Folder.findById resolves to folderUserId but userId and userData id is diferent", () => {
+    test("Then it should invoke next function with the error 404", async () => {
+      const idFolder = 2;
+      const req = {
+        params: {
+          idFolder,
+        },
+        userData: {
+          id: "4",
+        },
+      };
+
+      const folderUserId = {
+        userId: "5",
+        name: "restaurant",
+        landmarks: ["dfafd", "3rrrf344"],
+        creationData: "4567890'098765",
+      };
+
+      const error = new NewError("Folder not found");
+      error.code = 404;
       const res = mockResponse();
       const next = jest.fn();
 
-      FolderModel.findById = jest.fn().mockRejectedValue({});
+      FolderModel.findById = jest.fn().mockResolvedValue(folderUserId);
+
       await getUserFolderById(req, res, next);
 
-      expect(FolderModel.findById).toHaveBeenCalledWith(idFolder);
-    });
-    describe("And Folder.findById rejects", () => {
-      test("Then it should invoke invoke next function with the error rejected", async () => {
-        const error = new NewError();
-        FolderModel.findById = jest.fn().mockRejectedValue(error);
-        const idFolder = 0;
-
-        const req = {
-          params: {
-            idFolder,
-          },
-        };
-
-        const res = mockResponse();
-        const next = jest.fn();
-
-        await getUserFolderById(req, res, next);
-
-        expect(next).toHaveBeenCalledWith(error);
-        expect(error.code).toBe(400);
-      });
-    });
-    describe("And Folder.findById resolves to Restaurants", () => {
-      test("Then it should invoke res. json with a Restaurants", async () => {
-        const idFolder = 2;
-        const restaurants = {
-          name: "restaurant",
-          landmarks: ["dfafd", "3rrrf344"],
-          creationData: "4567890'098765",
-        };
-        const res = mockResponse();
-        FolderModel.findById = jest.fn().mockResolvedValue(restaurants);
-        const req = {
-          params: {
-            idFolder,
-          },
-        };
-
-        await getUserFolderById(req, res, null);
-
-        expect(res.json).toHaveBeenCalledWith(restaurants);
-      });
-    });
-    describe("And Pet.findById resolves to undefined", () => {
-      test("Then it should invoke next function with the error", async () => {
-        const idFolder = 2;
-        const error = new NewError("Landmark not found");
-        error.code = 404;
-
-        FolderModel.findById = jest.fn().mockResolvedValue(undefined);
-        const req = {
-          params: {
-            idFolder,
-          },
-        };
-        const res = mockResponse();
-        const next = jest.fn();
-
-        await getUserFolderById(req, res, next);
-
-        expect(error.code).toBe(404);
-        expect(next).toHaveBeenCalledWith(error);
-      });
+      expect(error.code).toBe(404);
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 });
