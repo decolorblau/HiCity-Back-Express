@@ -124,27 +124,3 @@ export const getFolderLandmark = async (req, res, next) => {
     next(error);
   }
 };
-
-/* export const deleteFolderLandmark = async (req, res, next) => {
-  try {
-    const { idLandmark } = req.params;
-    const deletedLandmark = await LandmarkModel.findByIdAndDelete(idLandmark);
-    if (!deletedLandmark) {
-      const error = new NewError("Landmark not found :(");
-      error.code = 404;
-      next(error);
-    } else {
-      await FolderModel.findByIdAndUpdate(
-        { _id: req.folderId },
-        { $pull: { landmarks: idLandmark } }
-      );
-      res.json(deletedLandmark);
-    }
-  } catch {
-    const error = new NewError("Couldn't delete Landmark");
-    error.code = 400;
-    next(error);
-  }
-}; */
-
-export const addFavouriteLandmark = async (req, res, next) => {};
