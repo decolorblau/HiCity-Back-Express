@@ -4,7 +4,7 @@ import {
   createLandmark,
   getLandmarks,
   getLandmarkById,
-  editLandmark,
+  updateLandmark,
 } from "../controllers/landmarkController";
 import auth from "../middlewares/auth";
 import firebase from "../middlewares/firebase";
@@ -32,7 +32,9 @@ router.put(
   firebase,
   auth,
   validate(landmarkEditSchema),
-  editLandmark
+  updateLandmark
 );
+
+router.put("/favourite/:idLandmark");
 
 export default router;

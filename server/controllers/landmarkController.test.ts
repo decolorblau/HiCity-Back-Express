@@ -3,7 +3,7 @@ import {
   createLandmark,
   getLandmarks,
   getLandmarkById,
-  editLandmark,
+  updateLandmark,
 } from "./landmarkController";
 
 jest.mock("../../database/models/landMarks.ts");
@@ -256,7 +256,7 @@ describe("Given a createLandmark function", () => {
   });
 });
 
-describe("Given the editLandmark function", () => {
+describe("Given the updateLandmark function", () => {
   describe("When it receives a valid id and valid object req", () => {
     test("Then it should invoke the  function with update landmark", async () => {
       const req = {
@@ -282,7 +282,7 @@ describe("Given the editLandmark function", () => {
       const res = mockResponse();
       LandmarkModel.findById = jest.fn().mockResolvedValue(req.landmarkData);
       LandmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(req.body);
-      await editLandmark(req, res, null);
+      await updateLandmark(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(req.body);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -314,7 +314,7 @@ describe("Given the editLandmark function", () => {
         const res = mockResponse();
         const next = jest.fn();
 
-        await editLandmark(req, res, next);
+        await updateLandmark(req, res, next);
 
         expect(next).toHaveBeenCalledWith(error);
         expect(next.mock.calls[0][0].code).toBe(400);
@@ -346,7 +346,7 @@ describe("Given the editLandmark function", () => {
       const next = jest.fn();
       const expectedError = new Error("Landmark not found.");
       LandmarkModel.findById = jest.fn().mockResolvedValue(null);
-      await editLandmark(req, null, next);
+      await updateLandmark(req, null, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
       expect(next.mock.calls[0][0].code).toBe(404);
