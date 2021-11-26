@@ -52,7 +52,6 @@ describe("Given the getLandmarks function", () => {
 
       await getLandmarks(null, res, null);
 
-      expect(LandmarkModel.find).toHaveBeenCalledTimes(1);
       expect(res.json).toHaveBeenLastCalledWith(landmark);
     });
   });
@@ -144,7 +143,7 @@ describe("Given a getLandmarkById function", () => {
         expect(res.json).toHaveBeenCalledWith(budellera);
       });
     });
-    describe("And Pet.findById resolves to undefined", () => {
+    describe("And Landmark.findById resolves to undefined", () => {
       test("Then it should invoke next function with the error", async () => {
         const idLandmark = 2;
         const error = new NewError("Landmark not found");

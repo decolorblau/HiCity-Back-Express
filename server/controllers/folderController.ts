@@ -1,6 +1,5 @@
 import Debug from "debug";
 import chalk from "chalk";
-import { readBufferWithDetectedEncoding } from "tslint/lib/utils";
 import FolderModel from "../../database/models/folder";
 import UserModel from "../../database/models/user";
 
