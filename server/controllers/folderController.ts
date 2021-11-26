@@ -1,5 +1,6 @@
 import Debug from "debug";
 import chalk from "chalk";
+import { readBufferWithDetectedEncoding } from "tslint/lib/utils";
 import FolderModel from "../../database/models/folder";
 import UserModel from "../../database/models/user";
 
@@ -26,6 +27,26 @@ export const getUserFolder = async (req, res, next) => {
   } catch (error) {
     error.code = 400;
     error.message = "Could not get folders";
+    next(error);
+  }
+};
+
+export const getUserFolderById = async (req, res, next) => {
+  const { idFolder } = req.params;
+  try {
+    const searchedFolder = await FolderModel.findById(idFolder);
+    const folderUserId = searchedFolder.userId;
+    const { id } = req.userData;
+
+    if (folderUserId.toString() === id) {
+      res.json(searchedFolder);
+    } else {
+      const error = new NewError("Folder not found");
+      error.code = 404;
+      next(error);
+    }
+  } catch (error) {
+    error.code = 400;
     next(error);
   }
 };
