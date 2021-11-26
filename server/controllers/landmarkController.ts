@@ -79,7 +79,7 @@ export const createLandmark = async (req, res, next) => {
   }
 };
 
-export const editLandmark = async (req, res, next) => {
+export const updateLandmark = async (req, res, next) => {
   const { idLandmark } = req.params;
   try {
     const { file } = req;
