@@ -1,7 +1,31 @@
 import FolderModel from "../../database/models/folder";
-import { getFolders } from "./folderController";
+import UserModel from "../../database/models/user";
+import {
+  getFolders,
+  getUserFolder,
+  getUserFolderById,
+} from "./folderController";
 
-jest.mock("../../database/models/landMarks.ts");
+jest.mock("../../database/models/folder.ts");
+jest.mock("../../database/models/user.ts");
+
+class NewError extends Error {
+  code: number | undefined;
+}
+
+interface IResponseTest {
+  status: () => void;
+
+  json: () => void;
+}
+
+const mockResponse = () => {
+  const res: IResponseTest = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+  };
+  return res;
+};
 
 describe("Given the getFolders function", () => {
   describe("When it receives an object res and a resolved promise", () => {
@@ -9,13 +33,10 @@ describe("Given the getFolders function", () => {
       const folders = [{}];
 
       FolderModel.find = jest.fn().mockResolvedValue(folders);
-      const res = {
-        json: jest.fn(),
-      };
+      const res = mockResponse();
 
       await getFolders(null, res, null);
 
-      expect(FolderModel.find).toHaveBeenCalledTimes(1);
       expect(res.json).toHaveBeenLastCalledWith(folders);
     });
   });
@@ -23,14 +44,141 @@ describe("Given the getFolders function", () => {
   describe("When it receives an object res and a rejected promise", () => {
     test("Then it should invoke the next function", async () => {
       FolderModel.find = jest.fn().mockRejectedValue(null);
-      const res = {
-        json: jest.fn(),
-      };
+      const res = mockResponse();
       const next = jest.fn();
 
       await getFolders(null, res, next);
 
       expect(next).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+describe("Given the getUsersFolders function", () => {
+  describe("When it receives an object res and a resolved promise", () => {
+    test("Then it should invoke the method json", async () => {
+      const userFolders = {
+        folders: ["3532525", "3532525"],
+      };
+      const req = {
+        userData: {
+          id: "3532525",
+        },
+      };
+      const res = mockResponse();
+
+      UserModel.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue(userFolders),
+      });
+
+      await getUserFolder(req, res, null);
+
+      expect(res.json).toHaveBeenLastCalledWith(userFolders.folders);
+    });
+  });
+
+  describe("When it receives an object res and a rejected promise", () => {
+    test("Then it should invoke the next function", async () => {
+      const req = {
+        userData: {
+          id: "3532525",
+        },
+      };
+      const res = mockResponse();
+      const next = jest.fn();
+
+      UserModel.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue(null),
+      });
+
+      await getUserFolder(req, res, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+describe("Given a getUserFolderById function", () => {
+  describe("And Folder.findById rejects", () => {
+    test("Then it should invoke invoke next function with the error rejected", async () => {
+      const error = new NewError();
+      const idFolder = 0;
+      const req = {
+        params: {
+          userId: 4,
+          idFolder,
+        },
+      };
+
+      FolderModel.findById = jest.fn().mockRejectedValue(error);
+
+      const res = mockResponse();
+      const next = jest.fn();
+
+      await getUserFolderById(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(error.code).toBe(400);
+    });
+  });
+  describe("And Folder.findById resolves to folderUserId and userId and userData id is equal", () => {
+    test("Then it should invoke res. json with a folderUserId", async () => {
+      const idFolder = 2;
+      const req = {
+        params: {
+          idFolder,
+        },
+        userData: {
+          id: "4",
+        },
+      };
+
+      const folderUserId = {
+        userId: "4",
+        name: "restaurant",
+        landmarks: ["dfafd", "3rrrf344"],
+        creationData: "4567890'098765",
+      };
+
+      const res = mockResponse();
+
+      FolderModel.findById = jest.fn().mockResolvedValue(folderUserId);
+
+      await getUserFolderById(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(folderUserId);
+    });
+  });
+  describe("And Folder.findById resolves to folderUserId but userId and userData id is diferent", () => {
+    test("Then it should invoke next function with the error 404", async () => {
+      const idFolder = 2;
+      const req = {
+        params: {
+          idFolder,
+        },
+        userData: {
+          id: "4",
+        },
+      };
+
+      const folderUserId = {
+        userId: "5",
+        name: "restaurant",
+        landmarks: ["dfafd", "3rrrf344"],
+        creationData: "4567890'098765",
+      };
+
+      const error = new NewError("Folder not found");
+      error.code = 404;
+      const res = mockResponse();
+      const next = jest.fn();
+
+      FolderModel.findById = jest.fn().mockResolvedValue(folderUserId);
+
+      await getUserFolderById(req, res, next);
+
+      expect(error.code).toBe(404);
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 });

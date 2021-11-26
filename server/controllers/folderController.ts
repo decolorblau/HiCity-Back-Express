@@ -30,6 +30,26 @@ export const getUserFolder = async (req, res, next) => {
   }
 };
 
+export const getUserFolderById = async (req, res, next) => {
+  const { idFolder } = req.params;
+  try {
+    const searchedFolder = await FolderModel.findById(idFolder);
+    const folderUserId = searchedFolder.userId;
+    const { id } = req.userData;
+
+    if (folderUserId.toString() === id) {
+      res.json(searchedFolder);
+    } else {
+      const error = new NewError("Folder not found");
+      error.code = 404;
+      next(error);
+    }
+  } catch (error) {
+    error.code = 400;
+    next(error);
+  }
+};
+
 export const createFolder = async (req, res, next) => {
   const { name } = req.body;
   const { id } = req.userData;
