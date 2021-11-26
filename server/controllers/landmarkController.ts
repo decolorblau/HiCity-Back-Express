@@ -1,6 +1,7 @@
 import Debug from "debug";
 import chalk from "chalk";
 import LandmarkModel from "../../database/models/landMarks";
+import FolderModel from "../../database/models/folder";
 
 const debug = Debug("HiCity:landmark");
 class NewError extends Error {
@@ -110,3 +111,40 @@ export const editLandmark = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getFolderLandmark = async (req, res, next) => {
+  try {
+    const folderLandmarks = await FolderModel.findById(req.idFolder).populate(
+      "landmarks"
+    );
+    res.json(folderLandmarks.landmarks);
+  } catch (error) {
+    error.code = 400;
+    error.message = "Could not get landmarks";
+    next(error);
+  }
+};
+
+/* export const deleteFolderLandmark = async (req, res, next) => {
+  try {
+    const { idLandmark } = req.params;
+    const deletedLandmark = await LandmarkModel.findByIdAndDelete(idLandmark);
+    if (!deletedLandmark) {
+      const error = new NewError("Landmark not found :(");
+      error.code = 404;
+      next(error);
+    } else {
+      await FolderModel.findByIdAndUpdate(
+        { _id: req.folderId },
+        { $pull: { landmarks: idLandmark } }
+      );
+      res.json(deletedLandmark);
+    }
+  } catch {
+    const error = new NewError("Couldn't delete Landmark");
+    error.code = 400;
+    next(error);
+  }
+}; */
+
+export const addFavouriteLandmark = async (req, res, next) => {};

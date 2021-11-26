@@ -1,11 +1,18 @@
 import { Joi } from "express-validation";
 
-const userSchemaValidator = {
+export const loginSchemaValidator = {
   body: Joi.object({
-    name: Joi.string().optional(),
     email: Joi.string().required(),
     password: Joi.string().required(),
+    folders: [Joi.string],
   }),
 };
 
-export default userSchemaValidator;
+export const registerSchemaValidator = {
+  body: Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+    folders: [Joi.string],
+  }),
+};

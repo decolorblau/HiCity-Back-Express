@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const userSchema = new Schema({
   name: {
@@ -14,6 +14,11 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+  },
+  folders: {
+    type: [Types.ObjectId],
+    ref: "folder",
+    default: [],
   },
 });
 const UserModel = model("user", userSchema, "users");

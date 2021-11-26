@@ -7,6 +7,7 @@ import Debug from "debug";
 
 import userRoutes from "./routes/userRoutes";
 import landmarkRoutes from "./routes/landmarkRoutes";
+import folderRoutes from "./routes/folderRoutes";
 
 import {
   notFoundErrorHandler,
@@ -45,6 +46,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use("/user", userRoutes);
 app.use("/landmark", landmarkRoutes);
+app.use("/folder", folderRoutes);
 app.use(notFoundErrorHandler);
 app.use(generalErrorHandler);
 

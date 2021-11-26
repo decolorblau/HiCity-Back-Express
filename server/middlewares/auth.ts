@@ -22,9 +22,8 @@ const checkAuthorization = (req, res, next) => {
       next(error);
     } else {
       try {
-        const { id } = jwt.verify(token, process.env.JWT_SECRET);
-        req.userData = { id };
-
+        const { id, folders } = jwt.verify(token, process.env.JWT_SECRET);
+        req.userData = { id, folders };
         next();
       } catch {
         const error = new NewError("Unauthorized.");
