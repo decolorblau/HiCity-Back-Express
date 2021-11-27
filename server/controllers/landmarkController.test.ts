@@ -196,8 +196,8 @@ describe("Given a createLandmark function", () => {
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
     });
   });
-  describe("And Landmark create rejects", () => {
-    test("Then it should invoke invoke next function with the error rejected", async () => {
+  describe("And LandmarkModel.create rejects", () => {
+    test("Then it should invoke next function with the error rejected", async () => {
       const error = new NewError();
 
       LandmarkModel.create = jest.fn().mockRejectedValue(error);
@@ -225,7 +225,7 @@ describe("Given a createLandmark function", () => {
     });
   });
   describe("And Landmark create rejects", () => {
-    test("Then it should invoke invoke next function with the error rejected", async () => {
+    test("Then it should invoke next function with the error rejected", async () => {
       const landmark = {
         title: "Font",
         city: "Barcelona",
@@ -287,7 +287,7 @@ describe("Given the updateLandmark function", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
     describe("and edit landmark rejects", () => {
-      test("Then it should invoke invoke next function with the error rejected", async () => {
+      test("Then it should invoke next function with the error rejected", async () => {
         const error = new NewError();
         LandmarkModel.findById = jest.fn().mockRejectedValue(error);
 
