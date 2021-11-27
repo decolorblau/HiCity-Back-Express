@@ -5,6 +5,7 @@ import {
   getLandmarks,
   getLandmarkById,
   updateLandmark,
+  addFavoriteLandmark,
 } from "../controllers/landmarkController";
 import auth from "../middlewares/auth";
 import firebase from "../middlewares/firebase";
@@ -35,6 +36,6 @@ router.put(
   updateLandmark
 );
 
-router.put("/favourite/:idLandmark");
+router.patch("/:idLandmark", auth, addFavoriteLandmark);
 
 export default router;
