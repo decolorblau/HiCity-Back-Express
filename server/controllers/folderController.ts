@@ -2,6 +2,7 @@ import Debug from "debug";
 import chalk from "chalk";
 import FolderModel from "../../database/models/folder";
 import UserModel from "../../database/models/user";
+import LandmarkModel from "../../database/models/landMarks";
 
 const debug = Debug("HiCity:folder");
 

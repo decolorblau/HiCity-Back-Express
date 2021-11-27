@@ -157,3 +157,40 @@ export const addFavoriteLandmark = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteFavoriteLandmark = async (req, res, next) => {
+  try {
+    const { idLandmark } = req.params;
+    const { id } = req.userData;
+    const userFolder = await FolderModel.findOne({ userId: id });
+    const deleteLandmark = await LandmarkModel.findOne({
+      _id: idLandmark,
+    });
+
+    if (deleteLandmark) {
+      if (userFolder.landmarks.includes(idLandmark)) {
+        const userFolderId = userFolder.id;
+        await FolderModel.findByIdAndUpdate(userFolderId, {
+          $pull: { landmarks: idLandmark },
+        });
+        userFolder.save();
+        res.json(deleteLandmark);
+      } else {
+        const error = new NewError(
+          "Error: could't find the landmark in your folders"
+        );
+        error.code = 404;
+        next(error);
+      }
+    } else {
+      const error = new NewError("Landmark not found");
+      error.code = 404;
+      next(error);
+    }
+  } catch {
+    const error = new NewError("Error: couldn't delete favorite landmark");
+    debug(chalk.red(error.message));
+    error.code = 400;
+    next(error);
+  }
+};
