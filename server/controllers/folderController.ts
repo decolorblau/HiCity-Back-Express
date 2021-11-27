@@ -51,19 +51,29 @@ export const getUserFolderById = async (req, res, next) => {
 };
 
 export const createFolder = async (req, res, next) => {
-  const { name } = req.body;
   const { id } = req.userData;
+  const { name } = req.body;
 
   try {
     const user = await UserModel.findById(id);
-    const newFolder = await FolderModel.create({ name, userId: id });
-    user.folders.push(newFolder.id);
+    const folder = await FolderModel.findOne({ name });
+    const folderUserId = folder ? folder.userId : null;
 
-    user.save();
-    res.status(201).json(newFolder);
+    if (folder && folderUserId.toString() === id) {
+      const error = new NewError("This folder already exist");
+      debug(chalk.red(error.message));
+      error.code = 406;
+      next(error);
+    } else {
+      const newFolder = await FolderModel.create({ name, userId: id });
+      res.status(201).json(newFolder);
+      user.folders.push(newFolder.id);
+      user.save();
+    }
   } catch {
     const error = new NewError("Error creating the folder");
     debug(chalk.red(error.message));
+    error.code = 400;
     next(error);
   }
 };

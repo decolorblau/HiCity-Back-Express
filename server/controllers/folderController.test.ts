@@ -1,6 +1,7 @@
 import FolderModel from "../../database/models/folder";
 import UserModel from "../../database/models/user";
 import {
+  createFolder,
   getFolders,
   getUserFolder,
   getUserFolderById,
@@ -179,6 +180,103 @@ describe("Given a getUserFolderById function", () => {
 
       expect(error.code).toBe(404);
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a createFolder function", () => {
+  describe("When it receives a request with a new folder and a res object", () => {
+    test("Then it should invoke FolderModel.create with a new folder and push the id folder to userModel", async () => {
+      const id = "3";
+
+      const req = {
+        body: {
+          name: "new folder",
+          userId: id,
+        },
+        userData: {
+          id,
+        },
+      };
+      const res = mockResponse();
+      const expectedStatus = 201;
+      const next = jest.fn();
+      const user = {
+        save: jest.fn(),
+        folders: {
+          push: jest.fn(),
+        },
+      };
+
+      UserModel.findById = jest.fn().mockResolvedValue(user);
+      FolderModel.findOne = jest.fn().mockResolvedValue(null);
+      FolderModel.create = jest.fn().mockResolvedValue(req.body);
+
+      await createFolder(req, res, next);
+
+      expect(res.json).toHaveBeenCalledWith(req.body);
+      expect(res.status).toHaveBeenLastCalledWith(expectedStatus);
+    });
+    describe("And FolderMoldel.create rejects", () => {
+      test("Then it should invoke next function with the error rejected", async () => {
+        const id = "3";
+
+        const req = {
+          body: {
+            name: "new folder",
+            userId: id,
+          },
+          userData: {
+            id,
+          },
+        };
+        const res = mockResponse();
+        const error = new NewError("Error creating the folder");
+        error.code = 400;
+        const next = jest.fn();
+
+        FolderModel.create = jest.fn().mockRejectedValue(error);
+
+        await createFolder(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(error.code).toBe(400);
+      });
+    });
+    describe("When it receives a request with a new folder but it exist already and a res object", () => {
+      test("Then it should invoke next function with the error 401", async () => {
+        const id = "3";
+        const folder = {
+          name: "new folder",
+          userId: id,
+        };
+
+        const req = {
+          body: {
+            name: "new folder",
+            userId: id,
+          },
+          userData: {
+            id,
+          },
+        };
+        const user = {
+          id,
+        };
+        const res = mockResponse();
+        const error = new NewError("This folder already exist");
+        error.code = 406;
+        const next = jest.fn();
+
+        UserModel.findById = jest.fn().mockResolvedValue(user);
+        FolderModel.findOne = jest.fn().mockResolvedValue(folder);
+        FolderModel.create = jest.fn().mockResolvedValue(error);
+
+        await createFolder(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(next.mock.calls[0][0].code).toBe(406);
+      });
     });
   });
 });
