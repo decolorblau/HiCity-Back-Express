@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import UserModel from "../../database/models/user";
+import UserModel from "../../database/models/UserModel";
 import { userSingUp, loginUser } from "./userController";
 
 dotenv.config();

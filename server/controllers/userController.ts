@@ -3,7 +3,7 @@ import chalk from "chalk";
 import Debug from "debug";
 
 import jwt from "jsonwebtoken";
-import UserModel from "../../database/models/user";
+import UserModel from "../../database/models/UserModel";
 
 const debug = Debug("HiCity:user");
 class NewError extends Error {

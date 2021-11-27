@@ -1,7 +1,7 @@
 import Debug from "debug";
 import chalk from "chalk";
-import LandmarkModel from "../../database/models/landMarks";
-import FolderModel from "../../database/models/folder";
+import LandmarkModel from "../../database/models/LandmarkModel";
+import FolderModel from "../../database/models/FolderModel";
 
 const debug = Debug("HiCity:landmark");
 class NewError extends Error {

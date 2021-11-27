@@ -1,4 +1,4 @@
-import LandmarkModel from "../../database/models/landMarks";
+import LandmarkModel from "../../database/models/LandmarkModel";
 import {
   createLandmark,
   getLandmarks,

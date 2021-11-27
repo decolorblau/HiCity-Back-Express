@@ -1,5 +1,5 @@
-import FolderModel from "../../database/models/folder";
-import UserModel from "../../database/models/user";
+import FolderModel from "../../database/models/FolderModel";
+import UserModel from "../../database/models/UserModel";
 import {
   createFolder,
   getFolders,
