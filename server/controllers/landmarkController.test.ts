@@ -82,9 +82,9 @@ describe("Given a getLandmarkById function", () => {
         },
       };
       const res = {
-        json: () => {},
+        json: jest.fn(),
       };
-      const next = () => {};
+      const next = jest.fn();
 
       await getLandmarkById(req, res, next);
 

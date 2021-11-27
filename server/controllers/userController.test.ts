@@ -38,10 +38,11 @@ describe("Given the userSingUp function", () => {
         },
       };
       const res = mockResponse();
+      const next = jest.fn();
 
       const expectedStatus = 201;
       UserModel.create = jest.fn().mockResolvedValue(req.body);
-      await userSingUp(req, res, () => {});
+      await userSingUp(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
       expect(res.json).toHaveBeenCalledWith(req.body);
@@ -168,13 +169,13 @@ describe("Given the loginUser function", () => {
       };
 
       const res = mockResponse();
-
+      const next = jest.fn();
       const expectedToken = 123;
 
       bcrypt.compare = jest.fn().mockResolvedValue(true);
       jwt.sign = jest.fn().mockReturnValue(expectedToken);
       UserModel.findOne = jest.fn().mockResolvedValue(req.body);
-      await loginUser(req, res, () => {});
+      await loginUser(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith({ token: expectedToken });
     });
