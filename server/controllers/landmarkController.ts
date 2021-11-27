@@ -124,3 +124,36 @@ export const getFolderLandmark = async (req, res, next) => {
     next(error);
   }
 };
+
+export const addFavoriteLandmark = async (req, res, next) => {
+  try {
+    const { idLandmark } = req.params;
+    const { id } = req.userData;
+    const landmark = await LandmarkModel.findOne({ id: idLandmark });
+    const userFolder = await FolderModel.findOne({ userId: id });
+
+    if (userFolder && landmark) {
+      if (userFolder.landmarks.includes(idLandmark)) {
+        const error = new NewError(
+          "The landmark already includes this landmark"
+        );
+        error.code = 409;
+        next(error);
+      } else {
+        userFolder.landmarks = [...userFolder.landmarks, idLandmark];
+        await userFolder.save();
+        res.status(200).json(userFolder);
+      }
+    } else {
+      const error = new NewError("Folder not Found");
+      debug(chalk.red(error.message));
+      error.code = 404;
+      next(error);
+    }
+  } catch {
+    const error = new NewError("Error adding favorite Landmark");
+    debug(chalk.red(error.message));
+    error.code = 400;
+    next(error);
+  }
+};
