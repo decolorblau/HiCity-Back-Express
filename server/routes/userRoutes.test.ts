@@ -11,8 +11,6 @@ import supertest from "supertest";
 import initializeDB from "../../database";
 import UserModel from "../../database/models/UserModel";
 import { initializeServer, app } from "../index";
-import IErrorValidation from "../../interfaces/IError";
-
 
 const request = supertest(app);
 const debug = Debug("HiCity:userRoutesTests");
