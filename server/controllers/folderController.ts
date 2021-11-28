@@ -1,7 +1,7 @@
 import Debug from "debug";
 import chalk from "chalk";
-import FolderModel from "../../database/models/folder";
-import UserModel from "../../database/models/user";
+import FolderModel from "../../database/models/FolderModel";
+import UserModel from "../../database/models/UserModel";
 
 const debug = Debug("HiCity:folder");
 

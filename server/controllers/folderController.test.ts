@@ -1,5 +1,5 @@
-import FolderModel from "../../database/models/folder";
-import UserModel from "../../database/models/user";
+import FolderModel from "../../database/models/FolderModel";
+import UserModel from "../../database/models/UserModel";
 import {
   createFolder,
   getFolders,
@@ -7,8 +7,8 @@ import {
   getUserFolderById,
 } from "./folderController";
 
-jest.mock("../../database/models/folder.ts");
-jest.mock("../../database/models/user.ts");
+jest.mock("../../database/models/FolderModel.ts");
+jest.mock("../../database/models/UserModel.ts");
 
 class NewError extends Error {
   code: number | undefined;

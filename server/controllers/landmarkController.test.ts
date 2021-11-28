@@ -1,4 +1,4 @@
-import LandmarkModel from "../../database/models/landMarks";
+import LandmarkModel from "../../database/models/LandmarkModel";
 import {
   createLandmark,
   getLandmarks,
@@ -6,7 +6,7 @@ import {
   updateLandmark,
 } from "./landmarkController";
 
-jest.mock("../../database/models/landMarks.ts");
+jest.mock("../../database/models/LandmarkModel.ts");
 
 interface IResponseTest {
   status: () => void;
@@ -82,9 +82,9 @@ describe("Given a getLandmarkById function", () => {
         },
       };
       const res = {
-        json: () => {},
+        json: jest.fn(),
       };
-      const next = () => {};
+      const next = jest.fn();
 
       await getLandmarkById(req, res, next);
 
