@@ -1,6 +1,18 @@
 import { Schema, model } from "mongoose";
 
-const landmarkSchema = new Schema({
+interface ILandmark {
+  title: string;
+  city: string;
+  imageUrl: string;
+  category: string;
+  latitude: number;
+  longitude: number;
+  lastUpdate: any;
+  introduction: string;
+  description: string;
+}
+
+const landmarkSchema: Schema<ILandmark> = new Schema({
   title: {
     type: String,
     require: true,
