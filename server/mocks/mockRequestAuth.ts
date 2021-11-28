@@ -11,7 +11,6 @@ const mockRequestAuth = (
   req.header = jest.fn().mockReturnValue(header);
   req.userId = "";
   req.params = params;
-  req.images = "";
   req.query = query;
 
   return req;
