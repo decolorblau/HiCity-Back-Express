@@ -1,4 +1,4 @@
-export default interface IResponse {
+export default interface IResponseTest {
   status: () => void;
   json: () => void;
 }

@@ -1,13 +1,6 @@
 import { notFoundErrorHandler, generalErrorHandler } from "./errors";
 import IErrorValidation from "../../interfaces/IError";
-
-const mockResponse = () => {
-  const res = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn().mockReturnThis(),
-  };
-  return res;
-};
+import mockResponse from "../mocks/mockResponse";
 
 describe("Given a notFoundErrorHandler", () => {
   describe("When it receives a null request", () => {
@@ -30,7 +23,7 @@ describe("Given a generalErrorHandler", () => {
       const error = new Error("test error") as IErrorValidation;
       error.code = 401;
 
-      generalErrorHandler(error, null, res, null);
+      generalErrorHandler(error, null, res);
 
       expect(res.status).toHaveBeenCalledWith(error.code);
       expect(res.json).toHaveBeenCalledWith({ error: error.message });
@@ -41,7 +34,7 @@ describe("Given a generalErrorHandler", () => {
       const res = mockResponse();
       const error = new Error() as IErrorValidation;
 
-      generalErrorHandler(error, null, res, null);
+      generalErrorHandler(error, null, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "General error" });
@@ -53,7 +46,7 @@ describe("Given a generalErrorHandler", () => {
       const error = new Error("Bad request") as IErrorValidation;
       error.statusCode = 400;
 
-      generalErrorHandler(error, null, res, null);
+      generalErrorHandler(error, null, res);
 
       expect(res.status).toHaveBeenCalledWith(error.statusCode);
       expect(res.json).toHaveBeenCalledWith({ error: error.message });

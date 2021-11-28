@@ -1,14 +1,18 @@
 import Debug from "debug";
 import chalk from "chalk";
+import { NextFunction, Response } from "express";
+import RequestAuth from "../../interfaces/RequestAuth";
 import LandmarkModel from "../../database/models/LandmarkModel";
 import FolderModel from "../../database/models/FolderModel";
+import IErrorValidation from "../../interfaces/IError";
 
 const debug = Debug("HiCity:landmark");
-class NewError extends Error {
-  code: number | undefined;
-}
 
-export const getLandmarks = async (req, res, next) => {
+export const getLandmarks = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const landmarks = await LandmarkModel.find();
     res.json(landmarks);
@@ -17,14 +21,18 @@ export const getLandmarks = async (req, res, next) => {
   }
 };
 
-export const getLandmarkById = async (req, res, next) => {
+export const getLandmarkById = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   const { idLandmark } = req.params;
   try {
     const searchedLandmark = await LandmarkModel.findById(idLandmark);
     if (searchedLandmark) {
       res.json(searchedLandmark);
     } else {
-      const error = new NewError("Landmark not found");
+      const error = new Error("Landmark not found") as IErrorValidation;
       error.code = 404;
       next(error);
     }
@@ -34,7 +42,11 @@ export const getLandmarkById = async (req, res, next) => {
   }
 };
 
-export const createLandmark = async (req, res, next) => {
+export const createLandmark = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   const image = req.file ? req.file : { fileURL: "" };
   const {
     title,
@@ -51,7 +63,10 @@ export const createLandmark = async (req, res, next) => {
     const landmark = await LandmarkModel.findOne({ latitude, longitude });
 
     if (landmark) {
-      const error: any = new NewError("This landmark already exists");
+      const error = new Error(
+        "This landmark already exists"
+      ) as IErrorValidation;
+
       debug(chalk.red(error.message));
       error.code = 400;
       next(error);
@@ -79,7 +94,11 @@ export const createLandmark = async (req, res, next) => {
   }
 };
 
-export const updateLandmark = async (req, res, next) => {
+export const updateLandmark = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   const { idLandmark } = req.params;
   try {
     const { file } = req;
@@ -90,7 +109,7 @@ export const updateLandmark = async (req, res, next) => {
 
     const landmark = await LandmarkModel.findById(idLandmark);
     if (!landmark) {
-      const error = new NewError("Landmark not found.");
+      const error = new Error("Landmark not found.") as IErrorValidation;
       error.code = 404;
       next(error);
     } else {
@@ -112,7 +131,11 @@ export const updateLandmark = async (req, res, next) => {
   }
 };
 
-export const getFolderLandmark = async (req, res, next) => {
+export const getFolderLandmark = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const folderLandmarks = await FolderModel.findById(req.idFolder).populate(
       "landmarks"
@@ -125,7 +148,11 @@ export const getFolderLandmark = async (req, res, next) => {
   }
 };
 
-export const addFavoriteLandmark = async (req, res, next) => {
+export const addFavoriteLandmark = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { idLandmark } = req.params;
     const { id } = req.userData;
@@ -134,9 +161,9 @@ export const addFavoriteLandmark = async (req, res, next) => {
 
     if (userFolder && landmark) {
       if (userFolder.landmarks.includes(idLandmark)) {
-        const error = new NewError(
+        const error = new Error(
           "The landmark already includes this landmark"
-        );
+        ) as IErrorValidation;
         error.code = 409;
         next(error);
       } else {
@@ -145,20 +172,27 @@ export const addFavoriteLandmark = async (req, res, next) => {
         res.status(200).json(userFolder);
       }
     } else {
-      const error = new NewError("Folder not Found");
+      const error = new Error("Folder not Found") as IErrorValidation;
       debug(chalk.red(error.message));
       error.code = 404;
       next(error);
     }
   } catch {
-    const error = new NewError("Error adding favorite Landmark");
+    const error = new Error(
+      "Error adding favorite Landmark"
+    ) as IErrorValidation;
+
     debug(chalk.red(error.message));
     error.code = 400;
     next(error);
   }
 };
 
-export const deleteFavoriteLandmark = async (req, res, next) => {
+export const deleteFavoriteLandmark = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { idLandmark } = req.params;
     const { id } = req.userData;
@@ -176,19 +210,21 @@ export const deleteFavoriteLandmark = async (req, res, next) => {
         userFolder.save();
         res.json(deleteLandmark);
       } else {
-        const error = new NewError(
+        const error = new Error(
           "Error: could't find the landmark in your folders"
-        );
+        ) as IErrorValidation;
         error.code = 404;
         next(error);
       }
     } else {
-      const error = new NewError("Landmark not found");
+      const error = new Error("Landmark not found") as IErrorValidation;
       error.code = 404;
       next(error);
     }
   } catch {
-    const error = new NewError("Error: couldn't delete favorite landmark");
+    const error = new Error(
+      "Error: couldn't delete favorite landmark"
+    ) as IErrorValidation;
     debug(chalk.red(error.message));
     error.code = 400;
     next(error);
