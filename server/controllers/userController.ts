@@ -4,18 +4,17 @@ import Debug from "debug";
 
 import jwt from "jsonwebtoken";
 import UserModel from "../../database/models/UserModel";
+import IErrorValidation from "../../interfaces/IError";
+
 
 const debug = Debug("HiCity:user");
-class NewError extends Error {
-  code: number | undefined;
-}
 
 export const userSingUp = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {
     const user = await UserModel.findOne({ email });
     if (user) {
-      const error: any = new NewError("This email is already registered");
+            const error = new Error("This email is already registered") as IErrorValidation;
       debug(chalk.red(error.message));
       error.code = 400;
       next(error);
@@ -30,7 +29,7 @@ export const userSingUp = async (req, res, next) => {
       debug(chalk.green("User registered correctly"));
     }
   } catch {
-    const error = new Error("Error creating the user");
+    const error = new Error("Error creating the user") as IErrorValidation;
     debug(chalk.red(error.message));
     next(error);
   }
@@ -41,14 +40,14 @@ export const loginUser = async (req, res, next) => {
   try {
     const user = await UserModel.findOne({ email });
     if (!user) {
-      const error = new NewError("Wrong credentials");
+      const error = new Error("Wrong credentials") as IErrorValidation;
       debug(chalk.red(error.message));
-      error.code = 500;
+      error.code = 401;
       next(error);
     } else {
       const rightPassword = await bcrypt.compare(password, user.password);
       if (!rightPassword) {
-        const error = new NewError("Wrong credentials");
+        const error = new Error("Wrong credentials") as IErrorValidation;
         debug(chalk.red(error.message));
         error.code = 401;
         next(error);
@@ -68,7 +67,7 @@ export const loginUser = async (req, res, next) => {
       }
     }
   } catch {
-    const error = new Error("Error logging in the user");
+    const error = new Error("Error logging in the user") as IErrorValidation;
     next(error);
   }
 };
