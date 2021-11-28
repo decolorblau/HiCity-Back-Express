@@ -4,7 +4,7 @@ import path from "path";
 const uploadImage = multer({
   storage: diskStorage,
   limits: {
-     fileSize: 8000000
+    fileSize: 8000000
   }({
     destination: "images",
     filename: (req, file, callback) => {
