@@ -6,6 +6,7 @@ import {
   updateLandmark,
   getFolderLandmark,
   addFavoriteLandmark,
+  deleteFavoriteLandmark
 } from "./landmarkController";
 import IErrorValidation from "../../interfaces/IError";
 import mockResponse from "../mocks/mockResponse";
@@ -39,7 +40,7 @@ describe("Given the getLandmarks function", () => {
 
       await getLandmarks(null, res, null);
 
-      expect(res.json).toHaveBeenLastCalledWith(landmark);
+      expect(res.json).toHaveBeenCalledWith(landmark);
     });
   });
 
@@ -383,7 +384,7 @@ describe("Given the addFavoriteLandmark function", () => {
 
       await addFavoriteLandmark(req, res, next);
 
-      expect(res.json).toHaveBeenLastCalledWith({
+      expect(res.json).toHaveBeenCalledWith({
         ...userFolder,
         landmarks: [req.params.idLandmark],
       });
@@ -490,6 +491,144 @@ describe("Given the addFavoriteLandmark function", () => {
       userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
 
       await addFavoriteLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0].code).toBe(400);
+    });
+  });
+});
+
+describe("Given the deleteFavoriteLandmark function", () => {
+  describe("When it receives a valid idLandmark, valid idUser and this landmark is included in userFolder", () => {
+    test("Then it should invoke the function with userFolder with new idLandmark", async () => {
+      const userFolder = {
+        landmarks: ["3224"],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const deleteLandmark = {
+        title: "new-test",
+        city: "test",
+        latitude: 1,
+        longitude: 2,
+        category: "test",
+        introduction: "test",
+        description: "test",
+        _id: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(deleteLandmark);
+      FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
+      userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
+      FolderModel.findByIdAndUpdate= jest.fn().mockReturnValue(userFolder)
+
+      await deleteFavoriteLandmark(req, res, next);
+
+      expect(res.json).toHaveBeenCalledWith(deleteLandmark);
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+  });
+  describe("When it receives a valid idLandmark, valid idUser and this landmark is not included in userFolder", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+      const userFolder = {
+        landmarks: ["3224"],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const deleteLandmark = {
+        title: "new-test",
+        city: "test",
+        latitude: 1,
+        longitude: 2,
+        category: "test",
+        introduction: "test",
+        description: "test",
+        _id: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error(
+        "Error: could't find the landmark in your folders"
+      ) as IErrorValidation;
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(deleteLandmark);
+      FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
+      userFolder.landmarks.includes = jest.fn().mockReturnValue(false);
+
+      await deleteFavoriteLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0].code).toBe(404);
+    });
+  });
+  describe("When Landmark is not found", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+      const userFolder = {
+        landmarks: ["3224"],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error("Landmark not found") as IErrorValidation;
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(null);
+      FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
+
+      await deleteFavoriteLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0].code).toBe(404);
+    });
+  });
+  describe("When FolderModel or LandmarkModel rejects", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error(
+        "Error: couldn't delete favorite landmark"
+      ) as IErrorValidation;
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(error);
+      FolderModel.findOne = jest.fn().mockReturnValue(error);
+
+      await deleteFavoriteLandmark(req, res, next);
 
       expect(next).toHaveBeenCalledWith(error);
       expect(next.mock.calls[0][0].code).toBe(400);
