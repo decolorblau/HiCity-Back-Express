@@ -4,26 +4,15 @@ import {
   getLandmarks,
   getLandmarkById,
   updateLandmark,
+  getFolderLandmark,
+  addFavoriteLandmark,
 } from "./landmarkController";
+import IErrorValidation from "../../interfaces/IError";
+import mockResponse from "../mocks/mockResponse";
+import mockRequestAuth from "../mocks/mockRequestAuth";
+import FolderModel from "../../database/models/FolderModel";
 
 jest.mock("../../database/models/LandmarkModel.ts");
-
-interface IResponseTest {
-  status: () => void;
-  json: () => void;
-}
-
-class NewError extends Error {
-  code: number | undefined;
-}
-
-const mockResponse = () => {
-  const res: IResponseTest = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn().mockReturnThis(),
-  };
-  return res;
-};
 
 jest.setTimeout(20000);
 
@@ -46,9 +35,7 @@ describe("Given the getLandmarks function", () => {
       ];
 
       LandmarkModel.find = jest.fn().mockResolvedValue(landmark);
-      const res = {
-        json: jest.fn(),
-      };
+      const res = mockResponse();
 
       await getLandmarks(null, res, null);
 
@@ -59,9 +46,7 @@ describe("Given the getLandmarks function", () => {
   describe("When it receives an object res and a rejected promise", () => {
     test("Then it should invoke the next function", async () => {
       LandmarkModel.find = jest.fn().mockRejectedValue(null);
-      const res = {
-        json: jest.fn(),
-      };
+      const res = mockResponse();
       const next = jest.fn();
 
       await getLandmarks(null, res, next);
@@ -75,36 +60,26 @@ describe("Given a getLandmarkById function", () => {
   describe("When it receives a request with an id 2, a res object and a next function", () => {
     test("Then it should invoke LandmarkModel.findById with a 2", async () => {
       LandmarkModel.findById = jest.fn().mockRejectedValue({});
-      const idLandmark = 2;
-      const req = {
-        params: {
-          idLandmark,
-        },
-      };
-      const res = {
-        json: jest.fn(),
-      };
+      const id = 2;
+      const req = mockRequestAuth(null, null, { idLandmark: id }, null);
+
+      const res = mockResponse();
       const next = jest.fn();
 
       await getLandmarkById(req, res, next);
 
-      expect(LandmarkModel.findById).toHaveBeenCalledWith(idLandmark);
+      expect(LandmarkModel.findById).toHaveBeenCalledWith(id);
     });
     describe("And Landmark.findById rejects", () => {
       test("Then it should invoke invoke next function with the error rejected", async () => {
-        const error = new NewError();
+        const error = new Error() as IErrorValidation;
+
         LandmarkModel.findById = jest.fn().mockRejectedValue(error);
-        const idLandmark = 0;
+        const id = 2;
+        const req = mockRequestAuth(null, null, { idLandmark: id }, null);
 
-        const req = {
-          params: {
-            idLandmark,
-          },
-        };
+        const res = mockResponse();
 
-        const res = {
-          json: jest.fn(),
-        };
         const next = jest.fn();
 
         await getLandmarkById(req, res, next);
@@ -115,7 +90,6 @@ describe("Given a getLandmarkById function", () => {
     });
     describe("And Landmark.findById resolves to Budellera", () => {
       test("Then it should invoke res. json with a Budellera", async () => {
-        const idLandmark = 2;
         const budellera = {
           title: "Font de la Budellera",
           city: "Barcelona",
@@ -129,14 +103,10 @@ describe("Given a getLandmarkById function", () => {
             "A l’obaga del cim del Tibidabo, tocant a Vallvidrera, en un fondal d’una atracció singular s’hi amaga la font de la Budellera, la més popular d’entre les que es conserven al Parc de Collserola, ordenada a base de murs, terrasses i escales, data de la segona meitat del segle XIX. L’entorn de la Font es va restaurar el 1988 inspirant-se amb el projecte original de J.C. N. Forestier (1918). També s’hi col·locà, una font de xarxa i una obra d’en Tàpies que representa l’escut de Barcelona. Sobre l’origen del topònim hi ha versions diferents. Una el relaciona amb les propietats medicinals de l’aigua per prevenir i curar els mals d’estómac. L’altra fa referència a una casa que hi havia als seus peus, en la qual hi fabricaven cordes per guitarres l’any 1860.",
         };
         LandmarkModel.findById = jest.fn().mockResolvedValue(budellera);
-        const req = {
-          params: {
-            idLandmark,
-          },
-        };
-        const res = {
-          json: jest.fn(),
-        };
+        const id = 2;
+        const req = mockRequestAuth(null, null, { idLandmark: id }, null);
+
+        const res = mockResponse();
 
         await getLandmarkById(req, res, null);
 
@@ -145,19 +115,14 @@ describe("Given a getLandmarkById function", () => {
     });
     describe("And Landmark.findById resolves to undefined", () => {
       test("Then it should invoke next function with the error", async () => {
-        const idLandmark = 2;
-        const error = new NewError("Landmark not found");
+        const error = new Error("Landmark not found") as IErrorValidation;
         error.code = 404;
 
         LandmarkModel.findById = jest.fn().mockResolvedValue(undefined);
-        const req = {
-          params: {
-            idLandmark,
-          },
-        };
-        const res = {
-          json: jest.fn(),
-        };
+        const id = 2;
+        const req = mockRequestAuth(null, null, { idLandmark: id }, null);
+        const res = mockResponse();
+
         const next = jest.fn();
 
         await getLandmarkById(req, res, next);
@@ -172,17 +137,17 @@ describe("Given a getLandmarkById function", () => {
 describe("Given a createLandmark function", () => {
   describe("When it receives a request with a new landmark, a res object and a next function", () => {
     test("Then it should invoke landmark create with a new landmark point", async () => {
-      const req = {
-        body: {
-          title: "Font",
-          city: "Barcelona",
-          category: "parque",
-          latitude: 41.444914,
-          longitude: 2.074983,
-          introduction: "hello",
-          description: "this is a description",
-        },
+      const landmark = {
+        title: "Font",
+        city: "Barcelona",
+        category: "parque",
+        latitude: 41.444914,
+        longitude: 2.074983,
+        introduction: "hello",
+        description: "this is a description",
       };
+
+      const req = mockRequestAuth(landmark, null, null, null);
 
       const res = mockResponse();
       const expectedStatus = 201;
@@ -198,24 +163,20 @@ describe("Given a createLandmark function", () => {
   });
   describe("And LandmarkModel.create rejects", () => {
     test("Then it should invoke next function with the error rejected", async () => {
-      const error = new NewError();
+      const error = new Error() as IErrorValidation;
+      const landmark = {
+        title: "Font",
+        city: "Barcelona",
+        category: "parque",
+        latitude: 41.444914,
+        longitude: 2.074983,
+        introduction: "hello",
+        description: "this is a description",
+      };
 
       LandmarkModel.create = jest.fn().mockRejectedValue(error);
-
-      const req = {
-        body: {
-          title: "",
-          city: "",
-          imageUrl: "",
-          latitude: 1,
-          longitude: 2,
-          category: "",
-          description: "",
-        },
-      };
-      const res = {
-        json: jest.fn(),
-      };
+      const req = mockRequestAuth(landmark, null, null, null);
+      const res = mockResponse();
       const next = jest.fn();
 
       await createLandmark(req, res, next);
@@ -236,11 +197,12 @@ describe("Given a createLandmark function", () => {
         description: "this is a description",
       };
 
-      const req = {
-        body: landmark,
-      };
+      const req = mockRequestAuth(landmark, null, null, null);
       const res = mockResponse();
-      const error = new NewError("This landmark already exists");
+      const error = new Error(
+        "This landmark already exists"
+      ) as IErrorValidation;
+
       error.code = 400;
 
       LandmarkModel.findOne = jest.fn().mockResolvedValue(landmark);
@@ -258,60 +220,50 @@ describe("Given a createLandmark function", () => {
 describe("Given the updateLandmark function", () => {
   describe("When it receives a valid id and valid object req", () => {
     test("Then it should invoke the  function with update landmark", async () => {
-      const req = {
-        file: { fileUrl: "fadfda" },
-        landmarkData: {
-          title: "",
-          city: "",
-          imageUrl: "",
-          latitude: 1,
-          longitude: 2,
-          category: "",
-          description: "",
-        },
-        params: {
-          id: 1,
-        },
-        body: {
-          title: "new-test",
-          id: 1,
-        },
+      const landmark = {
+        title: "new-test",
+        city: "test",
+        latitude: 1,
+        longitude: 2,
+        category: "test",
+        introduction: "test",
+        description: "test",
       };
 
-      const res = mockResponse();
-      LandmarkModel.findById = jest.fn().mockResolvedValue(req.landmarkData);
-      LandmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(req.body);
-      await updateLandmark(req, res, null);
+      const req = mockRequestAuth(landmark, null, { id: 1 }, null);
+      req.file = "imageUrl";
 
-      expect(res.json).toHaveBeenCalledWith(req.body);
+      const res = mockResponse();
+      const next = jest.fn();
+
+      LandmarkModel.findById = jest.fn().mockResolvedValue(landmark);
+      LandmarkModel.findByIdAndUpdate = jest.fn().mockResolvedValue(landmark);
+
+      await updateLandmark(req, res, next);
+
+      expect(res.json).toHaveBeenCalledWith(landmark);
       expect(res.status).toHaveBeenCalledWith(200);
     });
     describe("and edit landmark rejects", () => {
       test("Then it should invoke next function with the error rejected", async () => {
-        const error = new NewError();
-        LandmarkModel.findById = jest.fn().mockRejectedValue(error);
-
-        const req = {
-          landmarkData: {
-            title: "",
-            city: "",
-            imageUrl: "",
-            latitude: 1,
-            longitude: 2,
-            category: "",
-            description: "",
-          },
-          params: {
-            id: 1,
-          },
-          body: {
-            name: "new-test",
-            id: 1,
-          },
+        const landmark = {
+          title: "new-test",
+          city: "test",
+          latitude: 1,
+          longitude: 2,
+          category: "test",
+          introduction: "test",
+          description: "test",
         };
+
+        const req = mockRequestAuth(landmark, null, { id: 1 }, null);
+        req.file = "imageUrl";
 
         const res = mockResponse();
         const next = jest.fn();
+        const error = new Error() as IErrorValidation;
+
+        LandmarkModel.findById = jest.fn().mockRejectedValue(error);
 
         await updateLandmark(req, res, next);
 
@@ -323,32 +275,224 @@ describe("Given the updateLandmark function", () => {
 
   describe("When it receives a resolved function with a invalid id", () => {
     test("Then it should invoke the  function with a expectedError", async () => {
-      const req = {
-        landmarkData: {
-          title: "",
-          city: "",
-          imageUrl: "",
-          latitude: 1,
-          longitude: 2,
-          category: "",
-          description: "",
-        },
-        params: {
-          id: 1,
-        },
-        body: {
-          titel: "new-test",
-          id: 2,
-        },
+      const landmark = {
+        title: "new-test",
+        city: "test",
+        latitude: 1,
+        longitude: 2,
+        category: "test",
+        introduction: "test",
+        description: "test",
       };
 
+      const req = mockRequestAuth(landmark, null, { id: 1 }, null);
+      req.file = "imageUrl";
+
       const next = jest.fn();
-      const expectedError = new Error("Landmark not found.");
+      const error = new Error("Landmark not found.") as IErrorValidation;
+
       LandmarkModel.findById = jest.fn().mockResolvedValue(null);
       await updateLandmark(req, null, next);
 
-      expect(next).toHaveBeenCalledWith(expectedError);
+      expect(next).toHaveBeenCalledWith(error);
       expect(next.mock.calls[0][0].code).toBe(404);
+    });
+  });
+});
+
+describe("Given the getFolderLandmark function", () => {
+  describe("When it receives a valid idFolder", () => {
+    test("Then it should invoke the  function with folder landmarks", async () => {
+      const folderLandmarks = {
+        landmarks: ["3532525", "3532528"],
+      };
+
+      const req = mockRequestAuth(null, null, null, null);
+
+      req.idFolder = "35325";
+
+      const res = mockResponse();
+      const next = jest.fn();
+
+      FolderModel.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue(folderLandmarks),
+      });
+
+      await getFolderLandmark(req, res, next);
+
+      expect(res.json).toHaveBeenLastCalledWith(folderLandmarks.landmarks);
+    });
+  });
+  describe("When FolderModel.findById rejects", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+      const req = mockRequestAuth(null, null, null, null);
+
+      req.idFolder = "35325";
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error("Could not get landmarks") as IErrorValidation;
+      error.code = 400;
+
+      FolderModel.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue(null),
+      });
+
+      await getFolderLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(error.code).toBe(400);
+    });
+  });
+});
+
+describe("Given the addFavoriteLandmark function", () => {
+  describe("When it receives a valid idLandmark, valid idUser and this landmark is not included in userFolder", () => {
+    test("Then it should invoke the function with userFolder with new idLandmark", async () => {
+      const userFolder = {
+        landmarks: [],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const landmark = {
+        title: "new-test",
+        city: "test",
+        latitude: 1,
+        longitude: 2,
+        category: "test",
+        introduction: "test",
+        description: "test",
+        id: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(landmark);
+      FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
+      userFolder.landmarks.includes = jest.fn().mockReturnValue(false);
+
+      await addFavoriteLandmark(req, res, next);
+
+      expect(res.json).toHaveBeenLastCalledWith({
+        ...userFolder,
+        landmarks: [req.params.idLandmark],
+      });
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+  });
+  describe("When it receives a valid idLandmark, valid idUser and this landmark is included in userFolder", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+      const userFolder = {
+        landmarks: [],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const landmark = {
+        title: "new-test",
+        city: "test",
+        latitude: 1,
+        longitude: 2,
+        category: "test",
+        introduction: "test",
+        description: "test",
+        id: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error(
+        "The landmark already includes this landmark"
+      ) as IErrorValidation;
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(landmark);
+      FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
+      userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
+
+      await addFavoriteLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0].code).toBe(409);
+    });
+  });
+  describe("When FolderModel or LandmarkModel are not found", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+      const userFolder = {
+        landmarks: [],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error("Folder not Found") as IErrorValidation;
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(null);
+      FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
+      userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
+
+      await addFavoriteLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0].code).toBe(404);
+    });
+  });
+  describe("When FolderModel or LandmarkModel rejects", () => {
+    test("Then should invoke next function with the error rejected", async () => {
+      const userFolder = {
+        landmarks: [],
+        userId: "35325",
+        save: jest.fn(),
+      };
+
+      const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
+      req.userData = {
+        id: "35325",
+      };
+      req.params = {
+        idLandmark: "3224",
+      };
+
+      const res = mockResponse();
+      const next = jest.fn();
+      const error = new Error(
+        "Error adding favorite Landmark"
+      ) as IErrorValidation;
+
+      LandmarkModel.findOne = jest.fn().mockReturnValue(error);
+      FolderModel.findOne = jest.fn().mockReturnValue(error);
+      userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
+
+      await addFavoriteLandmark(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+      expect(next.mock.calls[0][0].code).toBe(400);
     });
   });
 });
