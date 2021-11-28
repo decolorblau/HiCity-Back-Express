@@ -6,7 +6,7 @@ import {
   updateLandmark,
 } from "./landmarkController";
 
-jest.mock("../../database/models/landMarks.ts");
+jest.mock("../../database/models/LandMarkModel.ts");
 
 interface IResponseTest {
   status: () => void;

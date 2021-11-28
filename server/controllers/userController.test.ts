@@ -6,7 +6,7 @@ import { userSingUp, loginUser } from "./userController";
 
 dotenv.config();
 
-jest.mock("../../database/models/user");
+jest.mock("../../database/models/UserModel");
 jest.mock("jsonwebtoken");
 jest.mock("bcrypt");
 
