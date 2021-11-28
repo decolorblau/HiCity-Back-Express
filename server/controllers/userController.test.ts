@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../../database/models/UserModel";
-import { userSingUp, loginUser } from "./userController";
+import { userSingUp, loginUser, getUsers } from "./userController";
+import mockResponse from "../mocks/mockResponse";
+
 
 dotenv.config();
 
@@ -10,31 +12,18 @@ jest.mock("../../database/models/UserModel");
 jest.mock("jsonwebtoken");
 jest.mock("bcrypt");
 
-interface IResponseTest {
-  status: () => void;
-  json: () => void;
-}
-
 class NewError extends Error {
   code: number | undefined;
 }
-
-const mockResponse = () => {
-  const res: IResponseTest = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn().mockReturnThis(),
-  };
-  return res;
-};
 
 describe("Given the userSingUp function", () => {
   describe("When it receives the req res objects and the promise resolves", () => {
     test("Then it should invoke the method json and status", async () => {
       const req = {
         body: {
-          username: "test",
+          name:"test",
+          email: "test",
           password: "test",
-          admin: false,
         },
       };
       const res = mockResponse();
@@ -53,9 +42,9 @@ describe("Given the userSingUp function", () => {
     test("Then it should invoke the method json", async () => {
       const req = {
         body: {
-          username: "test",
+          name:"test",
+          email: "test",
           password: "test",
-          admin: false,
         },
       };
 
@@ -178,6 +167,44 @@ describe("Given the loginUser function", () => {
       await loginUser(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith({ token: expectedToken });
+    });
+  });
+});
+
+describe("Given the getUsers function", () => {
+  describe("When it receives an object res and a resolved promise", () => {
+    test("Then it should invoke the method json", async () => {
+      const users = [
+        { 
+          name:"test1",
+          email: "test1",
+          password: "test1",
+        },
+        { 
+          name:"test2",
+          email: "test2",
+          password: "test2",
+        },
+      ];
+
+      UserModel.find = jest.fn().mockResolvedValue(users);
+      const res = mockResponse();
+
+      await getUsers(null, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(users);
+    });
+  });
+
+  describe("When it receives an object res and a rejected promise", () => {
+    test("Then it should invoke the next function", async () => {
+      UserModel.find = jest.fn().mockRejectedValue(null);
+      const res = mockResponse();
+      const next = jest.fn();
+
+      await getUsers(null, res, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
     });
   });
 });
