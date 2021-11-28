@@ -4,7 +4,7 @@ export const landmarkCreateSchema = {
   body: Joi.object({
     title: Joi.string().required(),
     city: Joi.string().required(),
-    imageUrl: Joi.string().required(),
+    imageUrl: Joi.string(),
     category: Joi.string().required(),
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
