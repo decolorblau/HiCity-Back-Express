@@ -7,9 +7,6 @@ import FolderModel from "../../database/models/FolderModel";
 import IErrorValidation from "../../interfaces/IError";
 
 const debug = Debug("HiCity:landmark");
-class NewError extends Error {
-  code: number | undefined;
-}
 
 export const getLandmarks = async (
   req: RequestAuth,
