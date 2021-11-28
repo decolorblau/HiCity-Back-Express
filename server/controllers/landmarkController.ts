@@ -47,7 +47,7 @@ export const createLandmark = async (
   res: Response,
   next: NextFunction
 ) => {
-  const image = req.file ? req.file : { fileURL: "" };
+  const image = req.file ? req.file: { fileURL: "" };
   const {
     title,
     city,
