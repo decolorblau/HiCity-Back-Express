@@ -27,8 +27,9 @@
   "scripts": {
     "dev": "nodemon dist/index.js -q",
     "start": "node dist/index.js",
-    "test": "jest",
-    "test-dev": "jest --watchAll --collect-coverage",
+    "test": "jest --testPathIgnorePatterns /dist /server/routes/",
+    "supertest": "jest --testPathPattern --runInBand  --watchAll /server/routes/",
+    "test-cov": "jest --runInBand --watchAll --collect-coverage",
     "prepare": "husky install",
     "ts-compile": "tsc --watch",
     "build": "tsc"

@@ -16,7 +16,7 @@ const userSchema = new Schema({
     required: true,
   },
   folders: {
-    type: [Types.ObjectId],
+    type: [Schema.Types.ObjectId],
     ref: "folder",
     default: [],
   },

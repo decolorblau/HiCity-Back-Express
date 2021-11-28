@@ -4,7 +4,6 @@ export const loginSchemaValidator = {
   body: Joi.object({
     email: Joi.string().required(),
     password: Joi.string().required(),
-    folders: [Joi.string],
   }),
 };
 
@@ -13,6 +12,5 @@ export const registerSchemaValidator = {
     name: Joi.string().required(),
     email: Joi.string().required(),
     password: Joi.string().required(),
-    folders: [Joi.string],
   }),
 };
