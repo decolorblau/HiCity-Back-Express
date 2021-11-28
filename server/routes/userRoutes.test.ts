@@ -79,20 +79,20 @@ describe("Given a /register endpoint", () => {
       const { body } = await request
         .post("/user/register")
         .send({
-    name: "Mar",
-    email: "blau@blau.com",
+          name: "Mar",
+          email: "blau@blau.com",
           password: "soymar",
         })
         .expect(400);
 
         const error = new NewError("This email is already registered")
 
-      expect(body).toEqual(expectedError);
+      expect(body).toEqual(error);
     });
   });
   describe("When a POST request arrives with a non existent email, a name and a password", () => {
     test("Then it should respond with a 201", async () => {
-      await request
+      const { body } = await request
         .post("/users/register")
         .send({
           email: "test@test.com",
@@ -101,7 +101,7 @@ describe("Given a /register endpoint", () => {
         })
         .expect(201);
 
-    expect(body).toHaveProperty("email" && "password");
+      expect(body).toHaveProperty("email" && "password");
       expect(body).toHaveProperty("email", "test@test.com");
 
     });
