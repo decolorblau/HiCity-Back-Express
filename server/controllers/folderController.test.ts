@@ -101,7 +101,7 @@ describe("Given the getUsersFolders function", () => {
 
 describe("Given a getUserFolderById function", () => {
   describe("And Folder.findById rejects", () => {
-    test("Then it should invoke invoke next function with the error rejected", async () => {
+    test("Then it should invoke next function with the error rejected", async () => {
       const error = new NewError();
       const idFolder = 0;
       const req = {
