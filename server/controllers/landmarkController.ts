@@ -208,6 +208,7 @@ export const deleteFavoriteLandmark = async (
           $pull: { landmarks: idLandmark },
         });
         userFolder.save();
+        res.status(200)
         res.json(deleteLandmark);
       } else {
         const error = new Error(
