@@ -18,6 +18,10 @@ const request = supertest(app);
 const debug = Debug("HiCity:userRoutesTests");
 let server;
 
+class NewError extends Error {
+  code: number | undefined;
+}
+
 beforeAll(async () => {
   await initializeDB(process.env.MONGODB_HICITY_TEST);
   server = await initializeServer(process.env.SERVER_PORT_TEST);
@@ -62,8 +66,9 @@ describe("Given the /login endpoint", () => {
         .send({ email: "blau@blau.com", password: "test" })
         .expect(401);
 
-         const error = new Error("Wrong credentials") as IErrorValidation;
- 
+         const error = new NewError("Wrong credentials")
+
+
       expect(body).toEqual(error);
     });
   });
@@ -81,7 +86,7 @@ describe("Given a /register endpoint", () => {
         })
         .expect(400);
 
-         const error = new Error("This email is already registered") as IErrorValidation;
+        const error = new NewError("This email is already registered")
 
       expect(body).toEqual(expectedError);
     });
