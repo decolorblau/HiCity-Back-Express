@@ -66,8 +66,7 @@ describe("Given the /login endpoint", () => {
         .send({ email: "blau@blau.com", password: "test" })
         .expect(401);
 
-         const error = new NewError("Wrong credentials")
-
+        const error = new NewError("Wrong credentials")
 
       expect(body).toEqual(error);
     });
