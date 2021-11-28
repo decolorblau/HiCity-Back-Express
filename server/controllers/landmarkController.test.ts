@@ -599,17 +599,6 @@ describe("Given the deleteFavoriteLandmark function", () => {
         idLandmark: "3224",
       };
 
-      const deleteLandmark = {
-        title: "new-test",
-        city: "test",
-        latitude: 1,
-        longitude: 2,
-        category: "test",
-        introduction: "test",
-        description: "test",
-        _id: "3224",
-      };
-
       const res = mockResponse();
       const next = jest.fn();
       const error = new Error("Landmark not found") as IErrorValidation;
