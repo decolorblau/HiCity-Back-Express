@@ -1,17 +1,18 @@
 import chalk from "chalk";
 import debug from "debug";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import IError from "../../interfaces/IError";
 
 export const notFoundErrorHandler = (req: Request, res: Response) => {
   res.status(404).json({ error: "Endpoint not found" });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const generalErrorHandler = (
   error: IError,
   req: Request,
-  res: Response
+  res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: NextFunction
 ) => {
   if (error.statusCode === 400) {
     error.message = "Bad request";
