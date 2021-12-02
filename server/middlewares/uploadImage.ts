@@ -2,10 +2,7 @@ import multer from "multer";
 import path from "path";
 
 const uploadImage = multer({
-  storage: diskStorage,
-  limits: {
-    fileSize: 8000000
-  }({
+  storage: multer.diskStorage({
     destination: "images",
     filename: (req, file, callback) => {
       const oldFilename = file.originalname;
