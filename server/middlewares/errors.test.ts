@@ -18,12 +18,12 @@ describe("Given a notFoundErrorHandler", () => {
 
 describe("Given a generalErrorHandler", () => {
   describe("When it receives an error without instanceof ValidationError, with error statusCode 401 and 'test error'", () => {
-    test("Then it should return error statusCode 400 and 'test error' message", () => {
+    test("Then it should return error statusCode 401 and 'test error' message", () => {
       const res = mockResponse();
       const error = new Error("test error") as IErrorValidation;
       error.code = 401;
 
-      generalErrorHandler(error, null, res);
+      generalErrorHandler(error, null, res, null);
 
       expect(res.status).toHaveBeenCalledWith(error.code);
       expect(res.json).toHaveBeenCalledWith({ error: error.message });
@@ -34,7 +34,7 @@ describe("Given a generalErrorHandler", () => {
       const res = mockResponse();
       const error = new Error() as IErrorValidation;
 
-      generalErrorHandler(error, null, res);
+      generalErrorHandler(error, null, res, null);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "General error" });
@@ -46,7 +46,7 @@ describe("Given a generalErrorHandler", () => {
       const error = new Error("Bad request") as IErrorValidation;
       error.statusCode = 400;
 
-      generalErrorHandler(error, null, res);
+      generalErrorHandler(error, null, res, null);
 
       expect(res.status).toHaveBeenCalledWith(error.statusCode);
       expect(res.json).toHaveBeenCalledWith({ error: error.message });

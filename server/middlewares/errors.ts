@@ -7,11 +7,11 @@ export const notFoundErrorHandler = (req: Request, res: Response) => {
   res.status(404).json({ error: "Endpoint not found" });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const generalErrorHandler = (
   error: IError,
   req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction
 ) => {
   if (error.statusCode === 400) {
