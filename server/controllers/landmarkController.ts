@@ -47,17 +47,13 @@ export const createLandmark = async (
   res: Response,
   next: NextFunction
 ) => {
-  const image = req.file ? req.file: { fileURL: "" };
-  const {
-    title,
-    city,
-    category,
-    latitude,
-    longitude,
-    lastUpdate,
-    introduction,
-    description,
-  } = req.body;
+  const image = req.file ? req.file : { fileURL: "" };
+  const { title, city, category, lastUpdate, introduction, description } =
+    req.body;
+  let { latitude, longitude } = req.body;
+
+  latitude = +latitude;
+  longitude = +longitude;
 
   try {
     const landmark = await LandmarkModel.findOne({ latitude, longitude });
@@ -208,7 +204,7 @@ export const deleteFavoriteLandmark = async (
           $pull: { landmarks: idLandmark },
         });
         userFolder.save();
-        res.status(200)
+        res.status(200);
         res.json(deleteLandmark);
       } else {
         const error = new Error(
