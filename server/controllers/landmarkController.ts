@@ -227,3 +227,25 @@ export const deleteFavoriteLandmark = async (
     next(error);
   }
 };
+
+export const deleteLandmark = async (
+  req: RequestAuth,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { idLandmark } = req.params;
+    const deletedLandmark = await LandmarkModel.findByIdAndDelete(idLandmark);
+    if (!deletedLandmark) {
+      const error = new Error("LandMark not found") as IErrorValidation;
+      error.code = 404;
+      next(error);
+    } else {
+      res.json(deletedLandmark);
+    }
+  } catch {
+    const error = new Error("Couldn't delete Landmark") as IErrorValidation;
+    error.code = 400;
+    next(error);
+  }
+};
