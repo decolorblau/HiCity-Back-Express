@@ -47,7 +47,12 @@ export const createLandmark = async (
   res: Response,
   next: NextFunction
 ) => {
-  const image = req.file ? req.file : { fileURL: "../../images/default.png" };
+  const image = req.file
+    ? req.file
+    : {
+        fileURL:
+          "https://storage.googleapis.com/hicity-cc05f.appspot.com/landmark-default-1638830083828-.png",
+      };
   const { title, city, category, lastUpdate, introduction, description } =
     req.body;
   let { latitude, longitude } = req.body;
