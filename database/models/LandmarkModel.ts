@@ -41,7 +41,7 @@ const landmarkSchema: Schema<ILandmark> = new Schema({
   },
   lastUpdate: {
     type: Date,
-    default: Date.now,
+    default: Date.now(),
   },
   introduction: {
     type: String,

@@ -10,7 +10,7 @@ const folderSchema = new Schema({
   },
   creationDate: {
     type: Date,
-    default: Date.now,
+    default: Date.now(),
   },
   landmarks: {
     type: [Types.ObjectId],
