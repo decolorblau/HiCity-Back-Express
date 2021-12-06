@@ -7,6 +7,7 @@ import {
   updateLandmark,
   addFavoriteLandmark,
   deleteFavoriteLandmark,
+  deleteLandmark,
 } from "../controllers/landmarkController";
 import auth from "../middlewares/auth";
 import firebase from "../middlewares/firebase";
@@ -37,6 +38,7 @@ router.put(
   updateLandmark
 );
 
+router.delete("/:idLandmark", auth, deleteLandmark);
 router.patch("/favorite/add/:idLandmark", auth, addFavoriteLandmark);
 router.patch("/favorite/delete/:idLandmark", auth, deleteFavoriteLandmark);
 
