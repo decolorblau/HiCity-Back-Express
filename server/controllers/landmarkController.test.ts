@@ -6,7 +6,8 @@ import {
   updateLandmark,
   getFolderLandmark,
   addFavoriteLandmark,
-  deleteFavoriteLandmark
+  deleteFavoriteLandmark,
+  deleteLandmark,
 } from "./landmarkController";
 import IErrorValidation from "../../interfaces/IError";
 import mockResponse from "../mocks/mockResponse";
@@ -149,7 +150,8 @@ describe("Given a createLandmark function", () => {
       };
 
       const req = mockRequestAuth(landmark, null, null, null);
-      req.file="https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
+      req.file =
+        "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU=";
 
       const res = mockResponse();
       const expectedStatus = 201;
@@ -516,7 +518,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
         idLandmark: "3224",
       };
 
-      const deleteLandmark = {
+      const deletedLandmark = {
         title: "new-test",
         city: "test",
         latitude: 1,
@@ -530,14 +532,14 @@ describe("Given the deleteFavoriteLandmark function", () => {
       const res = mockResponse();
       const next = jest.fn();
 
-      LandmarkModel.findOne = jest.fn().mockReturnValue(deleteLandmark);
+      LandmarkModel.findOne = jest.fn().mockReturnValue(deletedLandmark);
       FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
       userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
-      FolderModel.findByIdAndUpdate= jest.fn().mockReturnValue(userFolder)
+      FolderModel.findByIdAndUpdate = jest.fn().mockReturnValue(userFolder);
 
       await deleteFavoriteLandmark(req, res, next);
 
-      expect(res.json).toHaveBeenCalledWith(deleteLandmark);
+      expect(res.json).toHaveBeenCalledWith(deletedLandmark);
       expect(res.status).toHaveBeenCalledWith(200);
     });
   });
@@ -557,7 +559,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
         idLandmark: "3224",
       };
 
-      const deleteLandmark = {
+      const deletedLandmark = {
         title: "new-test",
         city: "test",
         latitude: 1,
@@ -574,7 +576,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
         "Error: could't find the landmark in your folders"
       ) as IErrorValidation;
 
-      LandmarkModel.findOne = jest.fn().mockReturnValue(deleteLandmark);
+      LandmarkModel.findOne = jest.fn().mockReturnValue(deletedLandmark);
       FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
       userFolder.landmarks.includes = jest.fn().mockReturnValue(false);
 
@@ -615,10 +617,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
   });
   describe("When FolderModel or LandmarkModel rejects", () => {
     test("Then should invoke next function with the error rejected", async () => {
-
-
       const req = mockRequestAuth(null, { idLandmark: "3224" }, null, null);
-
 
       const res = mockResponse();
       const next = jest.fn();
@@ -633,6 +632,77 @@ describe("Given the deleteFavoriteLandmark function", () => {
 
       expect(next).toHaveBeenCalledWith(error);
       expect(next.mock.calls[0][0].code).toBe(400);
+    });
+  });
+});
+
+describe("Given a deleteLandmark function", () => {
+  describe("When it receives a request with an id 2, a res object and a next function", () => {
+    describe("And Landmark.findByIdAndDelete rejects", () => {
+      test("Then it should invoke invoke next function with the error rejected", async () => {
+        const error = new Error("Couldn't delete Landmark") as IErrorValidation;
+        error.code = 400;
+
+        LandmarkModel.findByIdAndDelete = jest.fn().mockRejectedValue(error);
+        const id = 2;
+        const req = mockRequestAuth(null, null, { idLandmark: id }, null);
+
+        const res = mockResponse();
+
+        const next = jest.fn();
+
+        await deleteLandmark(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(error.code).toBe(400);
+      });
+    });
+    describe("And Landmark.findByIdAndDelete resolves to Budellera", () => {
+      test("Then it should invoke res. json with a Budellera", async () => {
+        const budellera = {
+          title: "Font de la Budellera",
+          city: "Barcelona",
+          imageUrl:
+            "https://offloadmedia.feverup.com/barcelonasecreta.com/wp-content/uploads/2019/02/09111259/31938192_1935134759883440_7096267355839266816_n-1024x597.jpg",
+          imagePath: "budellera.jpg",
+          category: "parque",
+          introduction:
+            "El torrent de la Budellera és un petit curs d'aigua de Collserola, que neix a la font de la Budellera.",
+          description:
+            "A l’obaga del cim del Tibidabo, tocant a Vallvidrera, en un fondal d’una atracció singular s’hi amaga la font de la Budellera, la més popular d’entre les que es conserven al Parc de Collserola, ordenada a base de murs, terrasses i escales, data de la segona meitat del segle XIX. L’entorn de la Font es va restaurar el 1988 inspirant-se amb el projecte original de J.C. N. Forestier (1918). També s’hi col·locà, una font de xarxa i una obra d’en Tàpies que representa l’escut de Barcelona. Sobre l’origen del topònim hi ha versions diferents. Una el relaciona amb les propietats medicinals de l’aigua per prevenir i curar els mals d’estómac. L’altra fa referència a una casa que hi havia als seus peus, en la qual hi fabricaven cordes per guitarres l’any 1860.",
+        };
+        LandmarkModel.findByIdAndDelete = jest
+          .fn()
+          .mockResolvedValue(budellera);
+        const id = 2;
+        const req = mockRequestAuth(null, null, { idLandmark: id }, null);
+
+        const res = mockResponse();
+
+        await deleteLandmark(req, res, null);
+
+        expect(res.json).toHaveBeenCalledWith(budellera);
+      });
+    });
+    describe("And Landmark.findByIdAndDelete resolves to undefined", () => {
+      test("Then it should invoke next function with the error", async () => {
+        const error = new Error("Landmark not found") as IErrorValidation;
+        error.code = 404;
+
+        LandmarkModel.findByIdAndDelete = jest
+          .fn()
+          .mockResolvedValue(undefined);
+        const id = 2;
+        const req = mockRequestAuth(null, null, { idLandmark: id }, null);
+        const res = mockResponse();
+
+        const next = jest.fn();
+
+        await deleteLandmark(req, res, next);
+
+        expect(error.code).toBe(404);
+        expect(next).toHaveBeenCalledWith(error);
+      });
     });
   });
 });
