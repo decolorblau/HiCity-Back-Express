@@ -242,7 +242,7 @@ export const deleteLandmark = async (
     const { idLandmark } = req.params;
     const deletedLandmark = await LandmarkModel.findByIdAndDelete(idLandmark);
     if (!deletedLandmark) {
-      const error = new Error("LandMark not found") as IErrorValidation;
+      const error = new Error("Landmark not found") as IErrorValidation;
       error.code = 404;
       next(error);
     } else {

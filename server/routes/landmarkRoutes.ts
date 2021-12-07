@@ -37,8 +37,7 @@ router.put(
   validate(landmarkEditSchema),
   updateLandmark
 );
-
-router.delete("/:idLandmark", auth, deleteLandmark);
+router.delete("/delete/:idLandmark", auth, deleteLandmark);
 router.patch("/favorite/add/:idLandmark", auth, addFavoriteLandmark);
 router.patch("/favorite/delete/:idLandmark", auth, deleteFavoriteLandmark);
 
