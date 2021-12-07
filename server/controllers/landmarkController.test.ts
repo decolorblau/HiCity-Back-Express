@@ -518,7 +518,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
         idLandmark: "3224",
       };
 
-      const deleteLandmark = {
+      const deletedLandmark = {
         title: "new-test",
         city: "test",
         latitude: 1,
@@ -532,14 +532,14 @@ describe("Given the deleteFavoriteLandmark function", () => {
       const res = mockResponse();
       const next = jest.fn();
 
-      LandmarkModel.findOne = jest.fn().mockReturnValue(deleteLandmark);
+      LandmarkModel.findOne = jest.fn().mockReturnValue(deletedLandmark);
       FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
       userFolder.landmarks.includes = jest.fn().mockReturnValue(true);
       FolderModel.findByIdAndUpdate = jest.fn().mockReturnValue(userFolder);
 
       await deleteFavoriteLandmark(req, res, next);
 
-      expect(res.json).toHaveBeenCalledWith(deleteLandmark);
+      expect(res.json).toHaveBeenCalledWith(deletedLandmark);
       expect(res.status).toHaveBeenCalledWith(200);
     });
   });
@@ -559,7 +559,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
         idLandmark: "3224",
       };
 
-      const deleteLandmark = {
+      const deletedLandmark = {
         title: "new-test",
         city: "test",
         latitude: 1,
@@ -576,7 +576,7 @@ describe("Given the deleteFavoriteLandmark function", () => {
         "Error: could't find the landmark in your folders"
       ) as IErrorValidation;
 
-      LandmarkModel.findOne = jest.fn().mockReturnValue(deleteLandmark);
+      LandmarkModel.findOne = jest.fn().mockReturnValue(deletedLandmark);
       FolderModel.findOne = jest.fn().mockReturnValue(userFolder);
       userFolder.landmarks.includes = jest.fn().mockReturnValue(false);
 
