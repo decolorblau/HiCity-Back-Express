@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 import UserModel from "../../database/models/UserModel";
 import IErrorValidation from "../../interfaces/IError";
 
-
 const debug = Debug("HiCity:user");
 
 export const userSingUp = async (req, res, next) => {
@@ -14,7 +13,9 @@ export const userSingUp = async (req, res, next) => {
   try {
     const user = await UserModel.findOne({ email });
     if (user) {
-            const error = new Error("This email is already registered") as IErrorValidation;
+      const error = new Error(
+        "This email is already registered"
+      ) as IErrorValidation;
       debug(chalk.red(error.message));
       error.code = 400;
       next(error);

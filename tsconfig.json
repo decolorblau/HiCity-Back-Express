@@ -4,10 +4,10 @@
     "target": "es5",
     "module": "commonjs",
     "lib": ["ES2016", "DOM"],
-    "outDir": "./dist",
+    "outDir": "./src/dist",
     "noEmitOnError": true,
     "sourceMap": true
   },
   "include": ["./**/*.ts", ".eslintrc.js"],
-  "exclude": ["./dist", "node_modules"]
+  "exclude": ["./src/dist", "node_modules"]
 }
