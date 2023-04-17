@@ -5,7 +5,6 @@ import UserModel from "../../database/models/UserModel";
 import { userSingUp, loginUser, getUsers } from "./userController";
 import mockResponse from "../mocks/mockResponse";
 
-
 dotenv.config();
 
 jest.mock("../../database/models/UserModel");
@@ -21,7 +20,7 @@ describe("Given the userSingUp function", () => {
     test("Then it should invoke the method json and status", async () => {
       const req = {
         body: {
-          name:"test",
+          name: "test",
           email: "test",
           password: "test",
         },
@@ -42,7 +41,7 @@ describe("Given the userSingUp function", () => {
     test("Then it should invoke the method json", async () => {
       const req = {
         body: {
-          name:"test",
+          name: "test",
           email: "test",
           password: "test",
         },
@@ -175,13 +174,13 @@ describe("Given the getUsers function", () => {
   describe("When it receives an object res and a resolved promise", () => {
     test("Then it should invoke the method json", async () => {
       const users = [
-        { 
-          name:"test1",
+        {
+          name: "test1",
           email: "test1",
           password: "test1",
         },
-        { 
-          name:"test2",
+        {
+          name: "test2",
           email: "test2",
           password: "test2",
         },

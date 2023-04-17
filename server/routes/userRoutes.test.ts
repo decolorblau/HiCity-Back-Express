@@ -64,12 +64,12 @@ describe("Given the /login endpoint", () => {
         .send({ email: "blau@blau.com", password: "test" })
         .expect(401);
 
-        const error = new NewError("Wrong credentials")
+      const error = new NewError("Wrong credentials");
 
       expect(body).toEqual(error);
     });
   });
-})
+});
 
 describe("Given a /register endpoint", () => {
   describe("When a POST request arrives with an already existing email", () => {
@@ -83,7 +83,7 @@ describe("Given a /register endpoint", () => {
         })
         .expect(400);
 
-        const error = new NewError("This email is already registered")
+      const error = new NewError("This email is already registered");
 
       expect(body).toEqual(error);
     });
@@ -101,7 +101,6 @@ describe("Given a /register endpoint", () => {
 
       expect(body).toHaveProperty("email" && "password");
       expect(body).toHaveProperty("email", "test@test.com");
-
     });
   });
 });

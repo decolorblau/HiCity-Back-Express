@@ -1,7 +1,7 @@
 {
   "name": "hicity-app",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "src/dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SkylabCoders/Claudia_Back-Final-Project-202109.git"
@@ -25,9 +25,9 @@
     "supertest": "^6.1.6"
   },
   "scripts": {
-    "dev": "nodemon dist/index.js -q",
-    "start": "node ./dist/index.js",
-    "test": "jest --testPathIgnorePatterns /dist /server/routes/",
+    "dev": "nodemon src/dist/index.js -q",
+    "start": "node ./src/dist/index.js",
+    "test": "jest --testPathIgnorePatterns /src/dist /server/routes/",
     "supertest": "jest --testPathPattern --runInBand  --watchAll /server/routes/",
     "test-cov": "jest --runInBand --watchAll --collect-coverage",
     "prepare": "husky install",
@@ -62,7 +62,7 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
-      "dist",
+      "src/dist",
       "/node_modules"
     ]
   },
